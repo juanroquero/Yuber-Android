@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="0px"
     android:paddingLeft="0px"
     android:paddingRight="0px"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -13,7 +13,7 @@
 
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="4"
+        android:weightSum="10"
         android:orientation="vertical">
 
         <fragment
@@ -21,13 +21,16 @@
             android:name="yuber.yuber.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="3"/>
+            android:layout_weight="9"/>
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            android:layout_weight="1"/> />
+            android:text="@string/callYuber"
+            android:id="@+id/callYuberButton"
+            android:layout_gravity="center_horizontal" />
+
+
 
     </LinearLayout>
 

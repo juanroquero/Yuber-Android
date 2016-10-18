@@ -21,6 +21,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <!-- Strings related to API maps -->
+    <string name="callYuber">Solicitar Yuber</string>
+
+
+
+    <!-- Strings related to API maps -->
     //AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw
     <string name="google_api_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw </string>
 </resources>
