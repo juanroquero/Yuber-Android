@@ -32,4 +32,32 @@
     <!-- Strings related to API maps -->
     //AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw
     <string name="google_api_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw </string>
+
+
+    <!-- ################################### -->
+    <!--   Strings related MATERIAL DESIGN   -->
+
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_home">Home</string>
+    <string name="nav_item_friends">Friends</string>
+    <string name="nav_item_notifications">Messages</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_home</item>
+        <item>@string/nav_item_friends</item>
+        <item>@string/nav_item_notifications</item>
+    </string-array>
+
+    <string name="title_messages">Messages</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_home">Home</string>
+
+    <!-- END Strings related MATERIAL DESIGN -->
+    <!-- ################################### -->
+
 </resources>

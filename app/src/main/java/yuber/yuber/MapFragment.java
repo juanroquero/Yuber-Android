@@ -96,7 +96,8 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
         initCamera( mCurrentLocation );
     }
 
-
+//gennymotion
+// jwt token
     @Override
     public void onConnectionSuspended(int i) {
         //handle play services disconnecting if location is being constantly used

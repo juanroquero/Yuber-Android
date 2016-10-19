@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary1">#3F51B5</color>
+    <color name="colorPrimaryDark1">#303F9F</color>
+    <color name="colorAccent1">#FF4081</color>
+
+
+
+
+<!--         MATERIAL DESIGN BY GOOGLE
+  https://material.google.com/style/color.html#color-color-palette    -->
+
+
+
+<!--         MATERIAL DESIGN BY
+  http://www.androidhive.info/2015/04/android-getting-started-with-material-design/    -->
+    <color name="colorPrimary">#607d8b</color>        // 500  Blue Grey
+    <color name="colorPrimaryDark">#455a64</color>    // 700  Blue Grey
+    <color name="textColorPrimary">#FFFFFF</color>    // Blanco. Manejar opacity para distintas letras
+    <color name="windowBackground">#eceff1</color>    // 50  Blue Grey
+    <color name="navigationBarColor">#455a64</color>  // 700  Blue Grey esta bien?
+    <color name="colorAccent">#ff6e40</color>         // A200 Deep Orange
+
+
 </resources>
