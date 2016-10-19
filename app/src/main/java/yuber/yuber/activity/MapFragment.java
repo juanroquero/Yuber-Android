@@ -1,9 +1,10 @@
-package yuber.yuber;
+package yuber.yuber.activity;
 
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +28,8 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 
 import java.io.IOException;
+
+import yuber.yuber.R;
 
 
 //public class com.example.agustin.mapasyuber.MapFragment extends SupportMapFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -169,15 +172,18 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
 
     private String getAddressFromLatLng( LatLng latLng ) {
         Geocoder geocoder = new Geocoder( getActivity() );
-
         String address = "";
         try {
             address =geocoder
                     .getFromLocation( latLng.latitude, latLng.longitude, 1 )
                     .get( 0 ).getAddressLine( 0 ) ;
         } catch (IOException e ) {
+            // this is the line of code that sends a real error message to the  log
+            Log.e("ERROR", "ERROR IN CODE: " + e.toString());
+            // this is the line that prints out the location in the code where the error occurred.
+            e.printStackTrace();
+            return "ERROR_IN_CODE";
         }
-
         return address;
     }
 
