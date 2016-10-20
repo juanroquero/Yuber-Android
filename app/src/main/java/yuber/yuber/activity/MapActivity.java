@@ -37,7 +37,7 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
         drawerFragment.setDrawerListener(this);
 
         // display the first navigation drawer view on app launch
-        displayView(0);
+        displayView(1);
     }
 
     @Override
@@ -85,8 +85,8 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
                 title = getString(R.string.title_home);
                 break;
             case 1:
-                fragment = new HomeFragment();
-                title = getString(R.string.title_friends);
+                fragment = new MpFragment();
+                title = getString(R.string.title_map);
                 break;
             case 2:
                 fragment = new HomeFragment();
@@ -97,6 +97,9 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
         }
 
         if (fragment != null) {
+
+
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_body, fragment);

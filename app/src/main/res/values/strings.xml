@@ -45,14 +45,16 @@
     <string name="nav_item_home">Home</string>
     <string name="nav_item_friends">Friends</string>
     <string name="nav_item_notifications">Messages</string>
+    <string name="nav_item_map">Mapa</string>
 
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_home</item>
+        <item>@string/nav_item_map</item>
         <item>@string/nav_item_friends</item>
-        <item>@string/nav_item_notifications</item>
     </string-array>
 
+    <string name="title_map">Mapa</string>
     <string name="title_messages">Messages</string>
     <string name="title_friends">Friends</string>
     <string name="title_home">Home</string>

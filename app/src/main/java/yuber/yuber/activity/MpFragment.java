@@ -1,14 +1,17 @@
 package yuber.yuber.activity;
 
+/**
+ * Created by Agustin on 20-Oct-16.
+ */
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -16,30 +19,30 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
-
 
 import java.io.IOException;
 
 import yuber.yuber.R;
 
-
-//public class com.example.agustin.mapasyuber.MapFragment extends SupportMapFragment implements GoogleApiClient.ConnectionCallbacks,
-//SupportMapFragment is used here rather than com.google.android.gms.maps.MapFragment
-public class MapFragment extends SupportMapFragment implements GoogleApiClient.ConnectionCallbacks,
+/**
+ * A fragment that launches other parts of the demo application.
+ */
+public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnMarkerClickListener  {
+        GoogleMap.OnMarkerClickListener   {
+
+    MapView mMapView;
+    private GoogleMap googleMap;
 
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
@@ -52,6 +55,52 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
             GoogleMap.MAP_TYPE_NONE }; /// NO NECESARIO SE PUEDE SACAR YA QUE NO INTERESA LA FORMA DEL TERRENO
     private int curMapTypeIndex = 1;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // inflat and return the layout
+        View v = inflater.inflate(R.layout.fragment_mp, container,
+                false);
+        mMapView = (MapView) v.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+
+        mMapView.onResume();// needed to get the map to display immediately
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        googleMap = mMapView.getMap();
+
+        /*
+        PORQUERIA ----posiblemente util en un futuro?
+
+        // latitude and longitude
+        double latitude = 17.385044;
+        double longitude = 78.486671;
+
+        // create marker
+        MarkerOptions marker = new MarkerOptions().position(
+                new LatLng(latitude, longitude)).title("Hello Maps");
+
+        // Changing marker icon
+        marker.icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+        // adding marker
+        googleMap.addMarker(marker);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(17.385044, 78.486671)).zoom(12).build();
+        googleMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(cameraPosition));
+
+        */
+
+        // Perform any camera updates here
+        return v;
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -70,10 +119,10 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
     }
 
     private void initListeners() {
-        getMap().setOnMarkerClickListener(this);
-        getMap().setOnMapLongClickListener(this);
-        getMap().setOnInfoWindowClickListener( this );
-        getMap().setOnMapClickListener(this);
+        googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnMapLongClickListener(this);
+        googleMap.setOnInfoWindowClickListener( this );
+        googleMap.setOnMapClickListener(this);
     }
 
     @Override
@@ -90,6 +139,7 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
         }
     }
 
+
     @Override
     public void onConnected(Bundle bundle) {
         mCurrentLocation = LocationServices
@@ -99,7 +149,7 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
         initCamera( mCurrentLocation );
     }
 
-//gennymotion
+    //gennymotion
 // jwt token
     @Override
     public void onConnectionSuspended(int i) {
@@ -117,13 +167,13 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
                 .tilt( 0.0f )
                 .build();
 
-        getMap().animateCamera( CameraUpdateFactory
+        googleMap.animateCamera( CameraUpdateFactory
                 .newCameraPosition( position ), null );
 
-        getMap().setMapType( MAP_TYPES[curMapTypeIndex] );
+        googleMap.setMapType( MAP_TYPES[curMapTypeIndex] );
         // getMap().setTrafficEnabled( true ); //habilita el flujo de trafico. Por defecto false?
-        getMap().setMyLocationEnabled( true );
-        getMap().getUiSettings().setZoomControlsEnabled( true );
+        googleMap.setMyLocationEnabled( true );
+        googleMap.getUiSettings().setZoomControlsEnabled( true );
     }
 
     @Override
@@ -155,7 +205,7 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
         options.title( getAddressFromLatLng( latLng ) );
 
         options.icon( BitmapDescriptorFactory.defaultMarker() );
-        mDestinationMarker = getMap().addMarker( options );
+        mDestinationMarker = googleMap.addMarker( options );
     }
 
     @Override
@@ -167,7 +217,7 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
                 BitmapFactory.decodeResource( getResources(),
                         R.mipmap.ic_launcher ) ) );
 
-        getMap().addMarker( options );
+        googleMap.addMarker( options );
     }
 
     private String getAddressFromLatLng( LatLng latLng ) {
@@ -189,8 +239,30 @@ public class MapFragment extends SupportMapFragment implements GoogleApiClient.C
 
 
 
-    //AL PEDO
 
 
 
-}// FIN DE MAPFRAGMENT
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
+    }
+}
