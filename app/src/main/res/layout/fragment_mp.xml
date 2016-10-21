@@ -1,27 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:theme="@style/MyMaterialTheme"
+    >
 
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom">
+        android:weightSum="100">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/callYuber"
-            android:id="@+id/callYuberButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/fab_margin" />
+      <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="bottom"
+            android:layout_weight="75"
+            >
+
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/callYuber"
+                    android:id="@+id/callYuberButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/fab_margin" />
+            </com.google.android.gms.maps.MapView>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="25">
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ubicacion "
+                android:id="@+id/localizationSwitch"
+                android:layout_gravity="center"
+                android:enabled="true"
+                android:checked="true"
+                android:textColor="#DF000000"
+                android:layout_margin="@dimen/fab_margin"  />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/y"
+                android:elevation="@dimen/abc_action_bar_subtitle_top_margin_material"
+                android:showDividers="middle|beginning|end"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Origen"
+                    android:id="@+id/textView2"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:enabled="true"
+                    android:textColor="#DF000000"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ubicacion actual"
+                    android:id="@+id/originVariableText"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:gravity="bottom|center_horizontal"
+                    android:textColor="#5F000000"/>
+
+            </TableLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
