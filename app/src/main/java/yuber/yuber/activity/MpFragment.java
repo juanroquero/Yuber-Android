@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,6 +30,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import java.io.IOException;
 
@@ -39,7 +45,7 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnMarkerClickListener   {
+        GoogleMap.OnMarkerClickListener {
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -54,6 +60,11 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
             GoogleMap.MAP_TYPE_TERRAIN,
             GoogleMap.MAP_TYPE_NONE }; /// NO NECESARIO SE PUEDE SACAR YA QUE NO INTERESA LA FORMA DEL TERRENO
     private int curMapTypeIndex = 1;
+
+    //Elementos del UI
+    private Switch switchGPS;
+    private TextView textoUbicacionOrigen;
+    private Button buttonLlammarUber;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +85,27 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
         googleMap = mMapView.getMap();
 
-        /*
+        switchGPS = (Switch) v.findViewById(R.id.switchLocalization);
+        textoUbicacionOrigen = (TextView) v.findViewById(R.id.textUbicacionOrigen);
+       // buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
+
+
+
+
+        // EVENTO ASOCIADO AL SWITCH
+        switchGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                 @Override
+                                                 public void onCheckedChanged(CompoundButton cb, boolean on) {
+                                                     if (on) {
+                                                         //Do something when Switch button is on/checked
+                                                         textoUbicacionOrigen.setText("Tu ubicacion actual (del GPS no funciona)");
+                                                     } else {
+                                                         //Do something when Switch is off/unchecked
+                                                         textoUbicacionOrigen.setText("Ubicacion del GPS... no funciona");
+                                                     }
+                                                 }
+        });
+               /*
         PORQUERIA ----posiblemente util en un futuro?
 
         // latitude and longitude
@@ -102,6 +133,9 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         return v;
     }
 
+
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -115,7 +149,6 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                 .build();
 
         initListeners();
-
     }
 
     private void initListeners() {
@@ -151,6 +184,8 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
     //gennymotion
 // jwt token
+
+
     @Override
     public void onConnectionSuspended(int i) {
         //handle play services disconnecting if location is being constantly used
@@ -198,14 +233,18 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onMapClick(LatLng latLng) {
+
+        switchGPS.setChecked(false);
+
         if (mDestinationMarker != null)
             mDestinationMarker.remove();
 
-        MarkerOptions options = new MarkerOptions().position( latLng );
-        options.title( getAddressFromLatLng( latLng ) );
+        MarkerOptions options = new MarkerOptions().position(latLng);
+        options.title(getAddressFromLatLng(latLng));
 
-        options.icon( BitmapDescriptorFactory.defaultMarker() );
-        mDestinationMarker = googleMap.addMarker( options );
+        options.icon(BitmapDescriptorFactory.defaultMarker());
+        mDestinationMarker = googleMap.addMarker(options);
+        textoUbicacionOrigen.setText(getAddressFromLatLng(latLng));
     }
 
     @Override

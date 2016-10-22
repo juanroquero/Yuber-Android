@@ -1,57 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/MyMaterialTheme"
-    >
+    xmlns:andorid="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/MyMaterialTheme">
+    <!-- The main content -->
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/callYuber"
+        android:id="@+id/callYuberButton"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="@dimen/fab_margin"/>
 
-    <LinearLayout
-        android:orientation="vertical"
+        <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="100">
-
-      <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="bottom"
-            android:layout_weight="75"
-            >
-
-
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/callYuber"
-                    android:id="@+id/callYuberButton"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/fab_margin" />
-            </com.google.android.gms.maps.MapView>
+        android:layout_height="match_parent" />
+    <!-- "Loaded" flash bar layout -->
+    <FrameLayout
+        android:id="@+id/FlashBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_margin="@dimen/fab_margin"
+        android:elevation="2dp"
+        android:background="#FFFFFF">
+        <!-- flash bar content -->
 
 
-        </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="25">
+            android:layout_height="match_parent"
+            android:layout_weight="25"
+            android:padding="@dimen/fab_margin"
+            android:id="@+id/bottomLayoutAskingForYuber">
 
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ubicacion "
-                android:id="@+id/localizationSwitch"
+                android:text="Geolocalizacion "
+                android:id="@+id/switchLocalization"
                 android:layout_gravity="center"
                 android:enabled="true"
                 android:checked="true"
-                android:textColor="#DF000000"
-                android:layout_margin="@dimen/fab_margin"  />
+                android:textColor="#DF000000" />
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -75,23 +70,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ubicacion actual"
-                    android:id="@+id/originVariableText"
+                    android:id="@+id/textUbicacionOrigen"
                     android:layout_gravity="center_horizontal|bottom"
                     android:gravity="bottom|center_horizontal"
                     android:textColor="#5F000000"/>
-
             </TableLayout>
         </LinearLayout>
 
-    </LinearLayout>
-
-</RelativeLayout>
 
 
-<!--
+    </FrameLayout>
+    <!-- Last loaded time layout -->
 
-
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-
--->
+</FrameLayout>
