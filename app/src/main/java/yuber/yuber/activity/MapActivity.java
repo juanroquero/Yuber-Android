@@ -89,7 +89,7 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
                 title = getString(R.string.title_map);
                 break;
             case 2:
-                fragment = new HomeFragment();
+                fragment = new MapWaitYFragment();
                 title = getString(R.string.title_messages);
                 break;
             default:

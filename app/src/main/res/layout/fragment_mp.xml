@@ -1,7 +1,7 @@
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:andorid="http://schemas.android.com/apk/res-auto"
     android:theme="@style/MyMaterialTheme">
     <!-- The main content -->
 
@@ -29,53 +29,11 @@
         <!-- flash bar content -->
 
 
+        <FrameLayout
+            android:id="@+id/container_map_options"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="25"
-            android:padding="@dimen/fab_margin"
-            android:id="@+id/bottomLayoutAskingForYuber">
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Geolocalizacion "
-                android:id="@+id/switchLocalization"
-                android:layout_gravity="center"
-                android:enabled="true"
-                android:checked="true"
-                android:textColor="#DF000000" />
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/y"
-                android:elevation="@dimen/abc_action_bar_subtitle_top_margin_material"
-                android:showDividers="middle|beginning|end"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Origen"
-                    android:id="@+id/textView2"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    android:enabled="true"
-                    android:textColor="#DF000000"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ubicacion actual"
-                    android:id="@+id/textUbicacionOrigen"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:gravity="bottom|center_horizontal"
-                    android:textColor="#5F000000"/>
-            </TableLayout>
-        </LinearLayout>
 
 
 

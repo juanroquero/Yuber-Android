@@ -8,6 +8,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +32,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import java.io.IOException;
 
@@ -64,7 +64,13 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     //Elementos del UI
     private Switch switchGPS;
     private TextView textoUbicacionOrigen;
+    private TextView textoUbicacionDestino;
     private Button buttonLlammarUber;
+    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO};
+    private state mActualState;
+    private Fragment fragment = null;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,13 +91,43 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
         googleMap = mMapView.getMap();
 
-        switchGPS = (Switch) v.findViewById(R.id.switchLocalization);
-        textoUbicacionOrigen = (TextView) v.findViewById(R.id.textUbicacionOrigen);
-       // buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
+
+        buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
+        mActualState = state.ELIGIENDO_ORIGEN;
+        displayView(mActualState);
+
+        //seteando listener en boton
+        buttonLlammarUber.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Estados del boton en funcion de los clicks
+                switch (mActualState) {
+                    case ELIGIENDO_ORIGEN:
+                        mActualState = state.LLAMANDO_YUBER;
+                        displayView(mActualState);
+                        buttonLlammarUber.setText("CANCELAR YUBER");
+                        break;
+                    case LLAMANDO_YUBER:
+                        mActualState = state.ELIGIENDO_ORIGEN;
+                        displayView(mActualState);
+                        if (mDestinationMarker != null)
+                            mDestinationMarker.remove();
+                        buttonLlammarUber.setText("SOLICITAR YUBER");
+                        break;
+                    case ELIGIENDO_DESTINO:
+                        //ELEGIR DESTINO /// AGREGAR CODIGO
+                        mActualState = state.ELIGIENDO_ORIGEN;
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
 
 
 
 
+/*
         // EVENTO ASOCIADO AL SWITCH
         switchGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                  @Override
@@ -206,7 +242,6 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                 .newCameraPosition( position ), null );
 
         googleMap.setMapType( MAP_TYPES[curMapTypeIndex] );
-        // getMap().setTrafficEnabled( true ); //habilita el flujo de trafico. Por defecto false?
         googleMap.setMyLocationEnabled( true );
         googleMap.getUiSettings().setZoomControlsEnabled( true );
     }
@@ -233,18 +268,35 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onMapClick(LatLng latLng) {
+        MarkerOptions options;
+        switch (mActualState) {
+            case ELIGIENDO_ORIGEN:
+                switchGPS = (Switch) fragment.getView().findViewById(R.id.switchLocalization);
+                textoUbicacionOrigen = (TextView) fragment.getView().findViewById(R.id.textUbicacionOrigen);
+                switchGPS.setChecked(false);
+                if (mDestinationMarker != null)
+                    mDestinationMarker.remove();
+                options = new MarkerOptions().position(latLng);
+                options.title(getAddressFromLatLng(latLng));
+                options.icon(BitmapDescriptorFactory.defaultMarker());
+                mDestinationMarker = googleMap.addMarker(options);
+                textoUbicacionOrigen.setText(getAddressFromLatLng(latLng));
+                break;
+            case ELIGIENDO_DESTINO:
+                //ELEGIR DESTINO /// AGREGAR CODIGO
+                textoUbicacionDestino = (TextView) fragment.getView().findViewById(R.id.textUbicacionDestino);
+                if (mDestinationMarker != null)
+                    mDestinationMarker.remove();
+                options = new MarkerOptions().position(latLng);
+                options.title(getAddressFromLatLng(latLng));
+                options.icon(BitmapDescriptorFactory.defaultMarker());
+                mDestinationMarker = googleMap.addMarker(options);
+                textoUbicacionDestino.setText(getAddressFromLatLng(latLng));
 
-        switchGPS.setChecked(false);
-
-        if (mDestinationMarker != null)
-            mDestinationMarker.remove();
-
-        MarkerOptions options = new MarkerOptions().position(latLng);
-        options.title(getAddressFromLatLng(latLng));
-
-        options.icon(BitmapDescriptorFactory.defaultMarker());
-        mDestinationMarker = googleMap.addMarker(options);
-        textoUbicacionOrigen.setText(getAddressFromLatLng(latLng));
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -277,8 +329,29 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     }
 
 
+    private void displayView(state estado) {
+        switch (estado) {
+            case ELIGIENDO_ORIGEN:
+                fragment = new MapCallYuberFragment();
+                break;
+            case LLAMANDO_YUBER:
+                fragment = new MapWaitYFragment();
+                break;
+            case ELIGIENDO_DESTINO:
+                //ELEGIR DESTINO /// AGREGAR CODIGO
+                mActualState = state.ELIGIENDO_ORIGEN;
 
-
+                break;
+            default:
+                break;
+        }
+        if (fragment != null) {
+            FragmentManager fragmentManager = getChildFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.FlashBarLayout, fragment);
+            fragmentTransaction.commit();
+        }
+    }
 
 
     @Override
