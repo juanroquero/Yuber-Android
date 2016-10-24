@@ -441,7 +441,7 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
                     // When the JSON response has status boolean value assigned with true
                     if( funcionaWS){ //|| obj.getString()
-                        Toast.makeText(getActivity().getApplicationContext(), "You are successfully logged in!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Se conecto con el WS!", Toast.LENGTH_LONG).show();
                         // Navigate to Home screen
                         displayView(state.ELIGIENDO_DESTINO);
                     }

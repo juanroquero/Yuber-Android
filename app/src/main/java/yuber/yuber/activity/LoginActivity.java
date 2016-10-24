@@ -55,6 +55,15 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
+
+
+        //BOTON OPCIONAL PARA SALTEARSE EL LOGIN
+        Button botonSaltearLogin = (Button) findViewById(R.id.button4);
+        botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                saltearLogin(v);
+            }
+        });
     }
 
     public void login() {
@@ -89,6 +98,17 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }, 3000);
     }
+
+
+    public void saltearLogin(View view){
+        //under button properties
+        //android:onClick="loginUser"
+        Intent homeIntent = new Intent(getApplicationContext(), MapActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //QUE ES ESTO? jaja
+        startActivity(homeIntent);
+    }
+
+
 
 
     @Override
