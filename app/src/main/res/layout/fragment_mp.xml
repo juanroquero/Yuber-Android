@@ -17,6 +17,9 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
+
     <!-- "Loaded" flash bar layout -->
     <FrameLayout
         android:id="@+id/FlashBarLayout"
@@ -38,6 +41,14 @@
 
 
     </FrameLayout>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:id="@+id/button3"
+        android:layout_gravity="left|bottom"/>
     <!-- Last loaded time layout -->
 
 </FrameLayout>

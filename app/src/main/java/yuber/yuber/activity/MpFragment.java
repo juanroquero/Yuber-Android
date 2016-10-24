@@ -3,6 +3,7 @@ package yuber.yuber.activity;
 /**
  * Created by Agustin on 20-Oct-16.
  */
+import android.app.ProgressDialog;
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,13 +32,19 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
 import yuber.yuber.R;
 
 /**
- * A fragment that launches other parts of the demo application.
+ * A actualFragment that launches other parts of the demo application.
  */
 public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -68,7 +74,10 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     private Button buttonLlammarUber;
     private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO};
     private state mActualState;
-    private Fragment fragment = null;
+    private Fragment actualFragment = null;
+
+    // Progress Dialog Object
+    ProgressDialog prgDialog;
 
 
 
@@ -125,6 +134,24 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         });
 
 
+
+        //seteando listener en boton
+        Button botonOK = (Button) v.findViewById(R.id.button3);;
+        botonOK.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                loginUser(v);
+            }
+        });
+
+        // PARA TESTING... SEGURAMENTE SIN USO FUTURO, PODRIA SER ELIMINADO O REUSADO EN OTRO CODIGO
+
+        // Instantiate Progress Dialog object
+        prgDialog = new ProgressDialog(getActivity());
+        // Set Progress Dialog Text
+        prgDialog.setMessage("Please wait...");
+        // Set Cancelable as False
+        prgDialog.setCancelable(false);
 
 
 /*
@@ -271,8 +298,8 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         MarkerOptions options;
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
-                switchGPS = (Switch) fragment.getView().findViewById(R.id.switchLocalization);
-                textoUbicacionOrigen = (TextView) fragment.getView().findViewById(R.id.textUbicacionOrigen);
+                switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
+                textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
                 switchGPS.setChecked(false);
                 if (mDestinationMarker != null)
                     mDestinationMarker.remove();
@@ -284,7 +311,7 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                 break;
             case ELIGIENDO_DESTINO:
                 //ELEGIR DESTINO /// AGREGAR CODIGO
-                textoUbicacionDestino = (TextView) fragment.getView().findViewById(R.id.textUbicacionDestino);
+                textoUbicacionDestino = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionDestino);
                 if (mDestinationMarker != null)
                     mDestinationMarker.remove();
                 options = new MarkerOptions().position(latLng);
@@ -332,26 +359,135 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     private void displayView(state estado) {
         switch (estado) {
             case ELIGIENDO_ORIGEN:
-                fragment = new MapCallYuberFragment();
+                actualFragment = new MapCallYuberFragment();
                 break;
             case LLAMANDO_YUBER:
-                fragment = new MapWaitYFragment();
+                actualFragment = new MapWaitYFragment();
                 break;
             case ELIGIENDO_DESTINO:
                 //ELEGIR DESTINO /// AGREGAR CODIGO
-                mActualState = state.ELIGIENDO_ORIGEN;
+                //mActualState = state.ELIGIENDO_ORIGEN;
+                actualFragment = new MapYubConfirmadoFragment();
 
                 break;
             default:
                 break;
         }
-        if (fragment != null) {
+        if (actualFragment != null) {
             FragmentManager fragmentManager = getChildFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.FlashBarLayout, fragment);
+            fragmentTransaction.replace(R.id.FlashBarLayout, actualFragment);
             fragmentTransaction.commit();
         }
     }
+
+
+    /**
+     * Method gets triggered when Login button is clicked
+     *
+     * @param view
+     */
+    public void loginUser(View view){
+        //under button properties
+        //android:onClick="loginUser"
+
+        // Instantiate Http Request Param Object
+        RequestParams params = new RequestParams();
+        // When Email Edit View and Password Edit View have values other than Null
+
+        params.put("lat", "43"); //http://api.geonames.org/findNearByWeatherJSON?lat=43&lng=-2&username=demo
+        params.put("lng", "-2");
+        params.put("username", "demo");
+       /*
+        // Put Http parameter username with value of Email Edit View control
+        params.put("username", email);
+        // Put Http parameter password with value of Password Edit Value control
+        params.put("password", password);
+        */
+        // Invoke RESTful Web Service with Http parameters
+        invokeWS(params);
+
+    }
+
+    /**
+     * Method that performs RESTful webservice invocations
+     *
+     * @param params
+     */
+    public void invokeWS(RequestParams params){
+        // Show Progress Dialog
+        prgDialog.show();
+        // Make RESTful webservice call using AsyncHttpClient object
+        //  SyncHttpClient client = new SyncHttpClient();
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        //client.get("http://api.geonames.org/findNearByWeatherJSON?",params ,new AsyncHttpResponseHandler() {
+        client.get("http://api.geonames.org/findNearByWeatherJSON?",params ,new AsyncHttpResponseHandler() {
+            // ANTERIOR
+            // client.get("http://192.168.2.2:9999/useraccount/login/dologin",params ,new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+                // Hide Progress Dialog
+                prgDialog.hide();
+                try {
+                    // JSON Object
+                    JSONObject obj = new JSONObject(response);
+                    Boolean funcionaWS = true;
+                    if (obj.has("status"))
+                        funcionaWS = obj.get("status").toString().contains("been exceeded");
+                    else
+                        funcionaWS = obj.has("weatherObservation");
+
+                    // When the JSON response has status boolean value assigned with true
+                    if( funcionaWS){ //|| obj.getString()
+                        Toast.makeText(getActivity().getApplicationContext(), "You are successfully logged in!", Toast.LENGTH_LONG).show();
+                        // Navigate to Home screen
+                        displayView(state.ELIGIENDO_DESTINO);
+                    }
+                    // Else display error message
+                    else{
+                        //errorMsg.setText(obj.getString("error_msg"));
+                        //Toast.makeText(getApplicationContext(), obj.getString("error_msg"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity().getApplicationContext(), obj.toString(), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    Toast.makeText(getActivity().getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+
+                }
+            }
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // Hide Progress Dialog
+                prgDialog.hide();
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
 
 
     @Override
