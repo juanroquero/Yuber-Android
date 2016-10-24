@@ -18,5 +18,10 @@
     <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.Dialog">
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="textColorPrimary">@color/iron</item> -->
+        <item name="background">@color/colorPrimary</item>
+    </style>
 
 </resources>
