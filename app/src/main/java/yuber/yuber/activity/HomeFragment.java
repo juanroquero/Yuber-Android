@@ -22,7 +22,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setContentView(R.layout.fragment_servicio_list);
 
+        if (savedInstanceState == null) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new ServicioFragment())
+                    .commit();
+        }
     }
 
     @Override
