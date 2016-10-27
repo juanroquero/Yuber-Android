@@ -72,7 +72,7 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     private TextView textoUbicacionOrigen;
     private TextView textoUbicacionDestino;
     private Button buttonLlammarUber;
-    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO};
+    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO, DESTINO_ELEGIDO};
     private state mActualState;
     private Fragment actualFragment = null;
 
@@ -124,7 +124,13 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                         break;
                     case ELIGIENDO_DESTINO:
                         //ELEGIR DESTINO /// AGREGAR CODIGO
-                        mActualState = state.ELIGIENDO_ORIGEN;
+                        if (mDestinationMarker  != null) { //.isVisible())
+
+                            mActualState = state.DESTINO_ELEGIDO;
+                            buttonLlammarUber.setEnabled(false);
+                        }
+                        else
+                            levantarToast();
 
                         break;
                     default:
@@ -197,7 +203,9 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     }
 
 
-
+    public void levantarToast(){
+        Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -368,6 +376,9 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                 //ELEGIR DESTINO /// AGREGAR CODIGO
                 //mActualState = state.ELIGIENDO_ORIGEN;
                 actualFragment = new MapYubConfirmadoFragment();
+                if (mDestinationMarker != null)
+                    mDestinationMarker.remove();
+                mDestinationMarker = null;
 
                 break;
             default:
@@ -443,6 +454,8 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
                     if( funcionaWS){ //|| obj.getString()
                         Toast.makeText(getActivity().getApplicationContext(), "Se conecto con el WS!", Toast.LENGTH_LONG).show();
                         // Navigate to Home screen
+                        mActualState = state.ELIGIENDO_DESTINO;
+                        buttonLlammarUber.setText("ELEGIR DESTINO");
                         displayView(state.ELIGIENDO_DESTINO);
                     }
                     // Else display error message
