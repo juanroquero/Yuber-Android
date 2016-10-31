@@ -22,6 +22,8 @@
     <color name="colorAccent">#ff6e40</color>         // A200 Deep Orange
 
 
+    <color name="year">#999999</color>
+    <color name="title">#222222</color>
 <!-- https://material.google.com/style/color.html#color-text-background-colors
     Table of percentages to hex values trasnparency (opacity)
      E.g. for 50% white you'd use #80FFFFFF.

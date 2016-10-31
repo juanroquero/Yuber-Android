@@ -7,7 +7,7 @@ import android.view.View;
 
 import yuber.yuber.R;
 
-public class MainActivity extends AppCompatActivity {
+public class OLDMainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

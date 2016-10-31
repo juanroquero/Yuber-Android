@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import yuber.yuber.R;
 
@@ -37,7 +36,7 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
         drawerFragment.setDrawerListener(this);
 
         // display the first navigation drawer view on app launch
-        displayView(1);
+        displayView(2);
     }
 
     @Override
@@ -89,8 +88,8 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
                 title = getString(R.string.title_map);
                 break;
             case 2:
-                fragment = new MapWaitYFragment();
-                title = getString(R.string.title_messages);
+                fragment = new HistoricFragment();
+                title = getString(R.string.title_historic);
                 break;
             default:
                 break;

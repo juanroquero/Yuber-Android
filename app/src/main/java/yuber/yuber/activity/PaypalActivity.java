@@ -1,7 +1,9 @@
-package yuber.yuber;
+package yuber.yuber.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import yuber.yuber.R;
 
 public class PaypalActivity extends AppCompatActivity {
 
