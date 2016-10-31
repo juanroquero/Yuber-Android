@@ -3,11 +3,16 @@ package yuber.yuber.activity;
 /**
  * Created by Agustin on 20-Oct-16.
  */
+
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +33,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,7 +54,7 @@ import yuber.yuber.R;
 /**
  * A actualFragment that launches other parts of the demo application.
  */
-public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener,
@@ -55,16 +63,17 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private static int REQUEST_LOCATION;
 
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
     private Marker mDestinationMarker;
 
-    private final int[] MAP_TYPES = { GoogleMap.MAP_TYPE_SATELLITE,
+    private final int[] MAP_TYPES = {GoogleMap.MAP_TYPE_SATELLITE,
             GoogleMap.MAP_TYPE_NORMAL,
             GoogleMap.MAP_TYPE_HYBRID,
             GoogleMap.MAP_TYPE_TERRAIN,
-            GoogleMap.MAP_TYPE_NONE }; /// NO NECESARIO SE PUEDE SACAR YA QUE NO INTERESA LA FORMA DEL TERRENO
+            GoogleMap.MAP_TYPE_NONE}; /// NO NECESARIO SE PUEDE SACAR YA QUE NO INTERESA LA FORMA DEL TERRENO
     private int curMapTypeIndex = 1;
 
     //Elementos del UI
@@ -72,13 +81,15 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     private TextView textoUbicacionOrigen;
     private TextView textoUbicacionDestino;
     private Button buttonLlammarUber;
-    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO, DESTINO_ELEGIDO};
+
+    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
+
+    ;
     private state mActualState;
     private Fragment actualFragment = null;
 
     // Progress Dialog Object
     ProgressDialog prgDialog;
-
 
 
     @Override
@@ -87,9 +98,10 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         // inflat and return the layout
         View v = inflater.inflate(R.layout.fragment_mp, container,
                 false);
+
+
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
         mMapView.onResume();// needed to get the map to display immediately
 
         try {
@@ -98,7 +110,10 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
             e.printStackTrace();
         }
 
-        googleMap = mMapView.getMap();
+
+        //SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
+        //       .findFragmentById(R.id.mapView);
+        mMapView.getMapAsync(this);
 
 
         buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
@@ -106,52 +121,19 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         displayView(mActualState);
 
         //seteando listener en boton
-        buttonLlammarUber.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Estados del boton en funcion de los clicks
-                switch (mActualState) {
-                    case ELIGIENDO_ORIGEN:
-                        mActualState = state.LLAMANDO_YUBER;
-                        displayView(mActualState);
-                        buttonLlammarUber.setText("CANCELAR YUBER");
-                        break;
-                    case LLAMANDO_YUBER:
-                        mActualState = state.ELIGIENDO_ORIGEN;
-                        displayView(mActualState);
-                        if (mDestinationMarker != null)
-                            mDestinationMarker.remove();
-                        buttonLlammarUber.setText("SOLICITAR YUBER");
-                        break;
-                    case ELIGIENDO_DESTINO:
-                        //ELEGIR DESTINO /// AGREGAR CODIGO
-                        if (mDestinationMarker  != null) { //.isVisible())
-
-                            mActualState = state.DESTINO_ELEGIDO;
-                            buttonLlammarUber.setEnabled(false);
-                        }
-                        else
-                            levantarToast();
-
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
+        buttonLlammarUber.setOnClickListener(createListenerBottomButton());
 
 
         //seteando listener en boton
-        Button botonOK = (Button) v.findViewById(R.id.button3);;
+        Button botonOK = (Button) v.findViewById(R.id.button3);
+        ;
         botonOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 loginUser(v);
             }
         });
 
         // PARA TESTING... SEGURAMENTE SIN USO FUTURO, PODRIA SER ELIMINADO O REUSADO EN OTRO CODIGO
-
         // Instantiate Progress Dialog object
         prgDialog = new ProgressDialog(getActivity());
         // Set Progress Dialog Text
@@ -160,52 +142,106 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         prgDialog.setCancelable(false);
 
 
+
+      //  switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
+
 /*
         // EVENTO ASOCIADO AL SWITCH
         switchGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                  @Override
                                                  public void onCheckedChanged(CompoundButton cb, boolean on) {
                                                      if (on) {
+                                                         //LA JODA DEL PEDIDO DE PERMISO
+                                                         Location myLocation = null;
+                                                         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                                                 != PackageManager.PERMISSION_GRANTED) {
+                                                             // Check Permissions Now
+                                                             ActivityCompat.requestPermissions(getActivity(),
+                                                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                                                     REQUEST_LOCATION);
+                                                         } else {
+                                                             // permission has been granted, continue as usual
+                                                             myLocation =
+                                                                     LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                                                         }
+                                                         if (myLocation != null){
+                                                             LatLng myLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
+                                                             googleMap.addMarker(new MarkerOptions().position(myLatLng).title("Ubicacion actual"));
+                                                             googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
+
+                                                         }
+
+
                                                          //Do something when Switch button is on/checked
-                                                         textoUbicacionOrigen.setText("Tu ubicacion actual (del GPS no funciona)");
+                                                         textoUbicacionOrigen.setText("Tu ubicacion actual");
                                                      } else {
                                                          //Do something when Switch is off/unchecked
                                                          textoUbicacionOrigen.setText("Ubicacion del GPS... no funciona");
                                                      }
                                                  }
         });
-               /*
-        PORQUERIA ----posiblemente util en un futuro?
+*/
 
-        // latitude and longitude
-        double latitude = 17.385044;
-        double longitude = 78.486671;
 
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(
-                new LatLng(latitude, longitude)).title("Hello Maps");
-
-        // Changing marker icon
-        marker.icon(BitmapDescriptorFactory
-                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
-        // adding marker
-        googleMap.addMarker(marker);
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(17.385044, 78.486671)).zoom(12).build();
-        googleMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));
-
-        */
 
         // Perform any camera updates here
         return v;
     }
 
 
-    public void levantarToast(){
-        Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMapParam) {
+        googleMap = googleMapParam;
+        LatLng myLocatLatLng;
+        LatLng mdeoLatLng = new LatLng(-34, -56);
+        Location myLocation = null;
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+        }
+        else {
+            // permission has been granted, continue as usual
+            myLocation =
+                    LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
+
+        // Add a marker in Montevideo and move the camera
+        if (myLocation == null){
+            myLocatLatLng = mdeoLatLng;
+        }
+        else{
+            myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
+        }
+
+        /*
+
+
+
+        // Getting LocationManager object from System Service LOCATION_SERVICE
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+
+
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if(location!=null){
+            onLocationChanged(location);
+        }
+        locationManager.requestLocationUpdates(provider, 20000, 0, this);
+*/
+      //  googleMap.addMarker(new MarkerOptions().position(myLocatLatLng).title("Ubicacion actual"));
+       // googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocatLatLng));
+
+        initListeners();
     }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -213,19 +249,20 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
 
         setHasOptionsMenu(true);
 
-        mGoogleApiClient = new GoogleApiClient.Builder( getActivity() )
-                .addConnectionCallbacks( this )
-                .addOnConnectionFailedListener( this )
-                .addApi( LocationServices.API )
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
                 .build();
 
-        initListeners();
+
+
     }
 
     private void initListeners() {
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMapLongClickListener(this);
-        googleMap.setOnInfoWindowClickListener( this );
+        googleMap.setOnInfoWindowClickListener(this);
         googleMap.setOnMapClickListener(this);
     }
 
@@ -238,19 +275,35 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
     @Override
     public void onStop() {
         super.onStop();
-        if( mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
     }
 
 
+
     @Override
     public void onConnected(Bundle bundle) {
+
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+        } else {
+            // permission has been granted, continue as usual
+            Location myLocation =
+                    LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
+
+
         mCurrentLocation = LocationServices
                 .FusedLocationApi
-                .getLastLocation( mGoogleApiClient );
+                .getLastLocation(mGoogleApiClient);
 
-        initCamera( mCurrentLocation );
+        initCamera(mCurrentLocation);
     }
 
     //gennymotion
@@ -262,22 +315,34 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         //handle play services disconnecting if location is being constantly used
     }
 
-    private void initCamera( Location location ) {
+    private void initCamera(Location location) {
         //improvisacion para ver si anda con ubicacio inventada
-        LatLng ubicacion = new LatLng(-34.9, -56.16 );
+        LatLng myActualLatLng = new LatLng( location.getLatitude(),location.getLongitude() );//new LatLng(-34.9, -56.16);
         //
         CameraPosition position = CameraPosition.builder()
-                .target( ubicacion)//new LatLng( location.getLatitude(),location.getLongitude() ) )
-                .zoom( 14f )
-                .bearing( 0.0f )
-                .tilt( 0.0f )
+                .target(myActualLatLng)
+                .zoom(16f)
+                .bearing(0.0f)
+                .tilt(0.0f)
                 .build();
 
-        googleMap.animateCamera( CameraUpdateFactory
-                .newCameraPosition( position ), null );
+        //marker inicial
+        mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
 
-        googleMap.setMapType( MAP_TYPES[curMapTypeIndex] );
-        googleMap.setMyLocationEnabled( true );
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+
+        googleMap.setMapType(MAP_TYPES[curMapTypeIndex]);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled( true );
     }
 
@@ -300,6 +365,12 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         marker.showInfoWindow();
         return true;
     }
+
+
+
+
+
+
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -392,6 +463,42 @@ public class MpFragment extends Fragment implements GoogleApiClient.ConnectionCa
         }
     }
 
+
+    private View.OnClickListener createListenerBottomButton(){
+        View.OnClickListener clickListtener = new View.OnClickListener() {
+            public void onClick(View v) {
+                // Estados del boton en funcion de los clicks
+                switch (mActualState) {
+                    case ELIGIENDO_ORIGEN:
+                        mActualState = state.LLAMANDO_YUBER;
+                        displayView(mActualState);
+                        buttonLlammarUber.setText("CANCELAR YUBER");
+                        break;
+                    case LLAMANDO_YUBER:
+                        mActualState = state.ELIGIENDO_ORIGEN;
+                        displayView(mActualState);
+                        if (mDestinationMarker != null)
+                            mDestinationMarker.remove();
+                        buttonLlammarUber.setText("SOLICITAR YUBER");
+                        break;
+                    case ELIGIENDO_DESTINO:
+                        //ELEGIR DESTINO /// AGREGAR CODIGO
+                        if (mDestinationMarker != null) { //.isVisible())
+
+                            mActualState = state.DESTINO_ELEGIDO;
+                            buttonLlammarUber.setEnabled(false);
+                        } else
+                            Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
+
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        return clickListtener;
+    }
 
     /**
      * Method gets triggered when Login button is clicked

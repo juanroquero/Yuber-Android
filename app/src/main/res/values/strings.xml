@@ -27,11 +27,11 @@
     <string name="callYuber">SOLICITAR YUBER</string>
 
 
-    <!-- Strings related to API maps -->
+    <!-- Strings related to API maps
     //AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw
     <string name="google_api_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyCy-GlLSos7wQtr70CRqIPjjQShABKetGw </string>
 
-
+    -->
 
 
     <!-- ################################### -->
