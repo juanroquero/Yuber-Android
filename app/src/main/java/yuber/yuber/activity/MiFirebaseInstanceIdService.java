@@ -12,14 +12,14 @@ public class MiFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
-        super.onTokenRefresh();
+     /*   super.onTokenRefresh();
 
         String token = FirebaseInstanceId.getInstance().getToken();
 
         Log.d(TAG, "Token: " + token);
 
         enviarTokenAlServidor(token);
-    }
+    */}
 
     private void enviarTokenAlServidor(String token) {
         // Enviar token al servidor

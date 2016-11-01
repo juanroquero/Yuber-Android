@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import yuber.yuber.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -64,6 +66,19 @@ public class LoginActivity extends AppCompatActivity {
                 saltearLogin(v);
             }
         });
+
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                String value = getIntent().getExtras().getString(key);
+              //  mEmailView.append("\n" + key + ": " + value);//tomar por culo
+            }
+        }
+
+
+        //adding token
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        Log.d(TAG, "Token: " + token);
     }
 
     public void login() {
