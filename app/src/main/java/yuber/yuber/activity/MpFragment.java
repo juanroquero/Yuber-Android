@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -21,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +32,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -129,7 +126,16 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
         ;
         botonOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                loginUser(v);
+                switch (mActualState) {
+                    case LLAMANDO_YUBER:
+                        loginUser(v);
+                        break;
+                    case DESTINO_ELEGIDO:
+                        mostrarViajeFinalizado();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
@@ -217,7 +223,7 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
             myLocatLatLng = mdeoLatLng;
         }
         else{
-            myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
+          //  myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
         }
 
         /*
@@ -317,7 +323,12 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
 
     private void initCamera(Location location) {
         //improvisacion para ver si anda con ubicacio inventada
-        LatLng myActualLatLng = new LatLng( location.getLatitude(),location.getLongitude() );//new LatLng(-34.9, -56.16);
+        LatLng myActualLatLng;
+        if(location!= null)
+            myActualLatLng = new LatLng( location.getLatitude(),location.getLongitude() );//new LatLng(-34.9, -56.16);
+        else
+            myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+       // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
         //
         CameraPosition position = CameraPosition.builder()
                 .target(myActualLatLng)
@@ -534,7 +545,7 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
      */
     public void invokeWS(RequestParams params){
         // Show Progress Dialog
-        prgDialog.show();
+        //prgDialog.show();
         // Make RESTful webservice call using AsyncHttpClient object
         //  SyncHttpClient client = new SyncHttpClient();
 
@@ -547,7 +558,7 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
             @Override
             public void onSuccess(String response) {
                 // Hide Progress Dialog
-                prgDialog.hide();
+                //prgDialog.hide();
                 try {
                     // JSON Object
                     JSONObject obj = new JSONObject(response);
@@ -602,7 +613,11 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
 
 
 
+    private void mostrarViajeFinalizado(){
 
+        FragmentManager fragmentManager = getFragmentManager();
+        new FragmentDialogFinViaje().show(fragmentManager, "FragmentDialogFinViaje");
+    }
 
 
 

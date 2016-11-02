@@ -1,5 +1,6 @@
 package yuber.yuber.activity;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -13,6 +14,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestHandle;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
+
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.loopj.android.http.RequestParams;
+
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
+
+import javax.net.ssl.HttpsURLConnection;
 
 import yuber.yuber.R;
 
@@ -63,7 +93,14 @@ public class LoginActivity extends AppCompatActivity {
         Button botonSaltearLogin = (Button) findViewById(R.id.button4);
         botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                saltearLogin(v);
+                try {
+                    invokeWS();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                //saltearLogin(v);
             }
         });
 
@@ -79,6 +116,16 @@ public class LoginActivity extends AppCompatActivity {
         String token = FirebaseInstanceId.getInstance().getToken();
 
         Log.d(TAG, "Token: " + token);
+
+
+
+        // PARA TESTING... SEGURAMENTE SIN USO FUTURO, PODRIA SER ELIMINADO O REUSADO EN OTRO CODIGO
+        // Instantiate Progress Dialog object
+        prgDialog = new ProgressDialog(this);
+        // Set Progress Dialog Text
+        prgDialog.setMessage("Please wait...");
+        // Set Cancelable as False
+        prgDialog.setCancelable(false);
     }
 
     public void login() {
@@ -178,4 +225,232 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
-}
+
+
+
+
+
+
+    // Progress Dialog Object
+    ProgressDialog prgDialog;
+
+    /**
+     * Method that performs RESTful webservice invocations
+     *
+     * @param //params
+     */
+    public void invokeWS() throws JSONException, UnsupportedEncodingException {
+        // Show Progress Dialog
+        prgDialog.show();
+
+        // Make RESTful webservice call using AsyncHttpClient object
+        JSONObject obj = new JSONObject();
+
+        obj.put("usuarioDireccion", "lsls123");
+        obj.put("usuarioContraseña", "123");
+        obj.put("usuarioTelefono", "050505050");
+        obj.put("usuarioApellido", "FAFAFA");
+        obj.put("usuarioNombre", "Sancho");
+        obj.put("usuarioPromedioPuntaje", 0.0);
+        obj.put("usuarioCorreo", "111111@Gmail.com");
+        obj.put("usuarioCiudad", "montevideo");
+        obj.put("estado", "OK");
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        ByteArrayEntity entity = new ByteArrayEntity(obj.toString().getBytes("UTF-8"));
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+        rePost = 0;
+        final Boolean[] funcionoWS = {false};
+     //   while (rePost < 2 && !funcionoWS[0]){
+            client.post(null, "http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente/", entity, "application/json", new AsyncHttpResponseHandler(){
+                // When the response returned by REST has Http response code '200'
+                @Override
+                public void onSuccess(String response) {
+                    Log.d(TAG, "ADENTRO DEL ONSUCCESSSSSSSSSSSSSSSSSSSSSSSSSSS");
+                    // Hide Progress Dialog
+                    prgDialog.hide();
+                    try {
+                        if (response.contains("Ok")){
+                            funcionoWS[0] = true;
+                            Toast.makeText(getApplicationContext(), "Se creo el usuario!", Toast.LENGTH_LONG).show();
+                        }
+                        // Else display error message
+                        else{
+                           // if (rePost == 1){
+                                funcionoWS[0] = true;
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                           // }
+                        }
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                       // if (rePost == 1){
+                            Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                       // }
+                    }
+                }
+                // When the response returned by REST has Http response code other than '200'
+                @Override
+                public void onFailure(int statusCode, Throwable error,
+                                      String content) {
+                    Log.d(TAG, "FALLOOOOOOOO :'( ");
+                  //  if (rePost == 1){
+                        // Hide Progress Dialog
+                        prgDialog.hide();
+                        // When Http response code is '404'
+                        if(statusCode == 404){
+                            Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                        }
+                        // When Http response code is '500'
+                        else if(statusCode == 500){
+                            Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                        }
+                        // When Http response code other than 404, 500
+                        else{
+                            Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                        }
+                    //}
+
+                }
+            });
+           // rePost++;
+        //}
+
+    }
+
+    private int rePost;
+
+
+
+
+
+/*
+
+    client.addHeader("Content-Type","application/json");
+    client.post("http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente/"
+
+    String datos = '"usuarioDireccion": "lsls123"), "usuarioContraseña":"123"), "usuarioTelefono": "050505050"),
+                    "usuarioApellido": "FAFAFA","usuarioNombre": "EL_FARRUKO"), "usuarioPromedioPuntaje": 0.0,
+                            "usuarioCorreo": "FARRUKO@REGGAETON.com");\n    params.put("usuarioCiudad", "montevideo");\n    params.put("estado", "OK"';
+*/
+    // HTTP POST request
+    private void sendPost() throws Exception {
+
+        RequestParams params = new RequestParams();
+        JSONObject obj = new JSONObject();
+
+        obj.put("usuarioDireccion", "lsls123");
+        obj.put("usuarioContraseña", "123");
+        obj.put("usuarioTelefono", "050505050");
+        obj.put("usuarioApellido", "FAFAFA");
+        obj.put("usuarioNombre", "EL_FARRUKO");
+        obj.put("usuarioPromedioPuntaje", 0.0);
+        obj.put("usuarioCorreo", "FARRUKO@REGGAETON.com");
+        obj.put("usuarioCiudad", "montevideo");
+        obj.put("estado", "OK");
+
+        URL url = new URL("http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+
+        // Obtener la conexión
+        //HttpURLConnection con = null;
+
+        try {
+            // Construir los datos a enviar
+            String data = "body=" + URLEncoder.encode(obj.toString(),"UTF-8");
+
+            con = (HttpURLConnection)url.openConnection();
+
+            // Activar método POST
+            con.setDoOutput(true);
+
+            // Tamaño previamente conocido
+            con.setFixedLengthStreamingMode(data.getBytes().length);
+
+            // Establecer application/x-www-form-urlencoded debido a la simplicidad de los datos
+            con.setRequestProperty("Content-Type","application/json");
+
+            OutputStream out = new BufferedOutputStream(con.getOutputStream());
+
+            out.write(data.getBytes());
+            out.flush();
+            out.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(con!=null)
+                con.disconnect();
+        }
+
+
+    }
+    public boolean sendPost2() throws JSONException {
+        RequestParams params = new RequestParams();
+        JSONObject obj = new JSONObject();
+/*
+        obj.put("usuarioDireccion","lsls123");
+        obj.put("usuarioContraseña", "123");
+        obj.put("usuarioTelefono", "050505050");
+        obj.put("usuarioApellido", "FAFAFA");
+        obj.put("usuarioNombre", "EL_FARRUKO");
+        obj.put("usuarioPromedioPuntaje", new Double(0.0));
+        obj.put("usuarioCorreo", "FARRUKO@REGGAETON.com");
+        obj.put("usuarioCiudad", "montevideo");
+        obj.put("estado", "OK");
+
+        URL url = new URL("http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente");
+
+
+        HttpURLConnection connection;
+        try {
+
+
+
+
+
+            URL gcmAPI = new URL("http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente");
+            connection = (HttpURLConnection) gcmAPI.openConnection();
+
+            connection.setRequestMethod("POST");// type of request
+            connection.setRequestProperty("Content-Type", "application/json");//some header you want to add
+            connection.setDoOutput(true);
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+            //content is the object you want to send, use instead of NameValuesPair
+            mapper.writeValue(dataOutputStream, obj);
+
+            dataOutputStream.flush();
+            dataOutputStream.close();
+
+            responseCode = connection.getResponseCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (responseCode == 200) {
+            Log.i("Request Status", "This is success response status from server: " + responseCode);
+            return true;
+        } else {
+            Log.i("Request Status", "This is failure response status from server: " + responseCode);
+            return false;
+        }
+
+        */
+        return true;
+    }
+
+
+
+
+
+
+
+
+
+
+
+} // FIN CLASE LOGIN

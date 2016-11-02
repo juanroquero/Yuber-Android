@@ -98,9 +98,48 @@ public class HistoricFragment extends Fragment {
 
 
     private void prepareMovieData() {
-        Movie movie = new Movie("Mad Max: Fury Road", "Action & Adventure", "2015");
+        Movie movie = new Movie("23/10/2016", "5 km", "$250");
         movieList.add(movie);
 
+
+        movie = new Movie("20/010/2016", "4 km", "$200");
+        movieList.add(movie);
+
+        movie = new Movie("19/09/2016", "2,5 km", "$125");
+        movieList.add(movie);
+
+        movie = new Movie("19/09/2016", "3,5 km", "$175");
+        movieList.add(movie);
+
+        movie = new Movie("29/07/2016", "1 km", "$50");
+        movieList.add(movie);
+
+        movie = new Movie("19/05/2016", "10 km", "$500");
+        movieList.add(movie);
+
+        movie = new Movie("02/05/2016", "12 km", "$600");
+        movieList.add(movie);
+
+        movie = new Movie("29/03/2016", "3 km", "$150");
+        movieList.add(movie);
+
+        movie = new Movie("19/02/2016", "5 km", "$250");
+        movieList.add(movie);
+
+        movie = new Movie("19/01/2016", "1 km", "$50");
+        movieList.add(movie);
+
+        movie = new Movie("10/01/2016", "2,2km", "$110");
+        movieList.add(movie);
+
+        movie = new Movie("19/07/2015", "2 km", "$100");
+        movieList.add(movie);
+
+        movie = new Movie("01/01/2015", "12 km", "$600");
+        movieList.add(movie);
+
+
+/*
         movie = new Movie("Inside Out", "Animation, Kids & Family", "2015");
         movieList.add(movie);
 
@@ -145,7 +184,7 @@ public class HistoricFragment extends Fragment {
 
         movie = new Movie("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014");
         movieList.add(movie);
-
+*/
         //mAdapter.notifyDataSetChanged();
     }
 

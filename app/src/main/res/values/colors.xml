@@ -33,8 +33,15 @@
     60% — 99        55% — 8C       50% — 80       45% — 73
     40% — 66        35% — 59       30% — 4D       25% — 40
     20% — 33        15% — 26       10% — 1A        5% — 0D    0% — 00
--->
 
+
+
+
+   SE PUEDEN ELIMINAR LOS DE ABAJO??
+-->
+    <color name="primary">#E91E63</color>
+    <color name="primary_dark">#C2185B</color>
+    <color name="light">#F8BBD0</color>
 
 
 </resources>
