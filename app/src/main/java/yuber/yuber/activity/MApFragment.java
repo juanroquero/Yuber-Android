@@ -1,8 +1,5 @@
 package yuber.yuber.activity;
 
-/**
- * Created by Agustin on 20-Oct-16.
- */
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -74,22 +71,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private Location mCurrentLocation;
     private Marker mDestinationMarker;
 
-    private final int[] MAP_TYPES = {GoogleMap.MAP_TYPE_SATELLITE,
-            GoogleMap.MAP_TYPE_NORMAL,
-            GoogleMap.MAP_TYPE_HYBRID,
-            GoogleMap.MAP_TYPE_TERRAIN,
-            GoogleMap.MAP_TYPE_NONE}; /// NO NECESARIO SE PUEDE SACAR YA QUE NO INTERESA LA FORMA DEL TERRENO
-    private int curMapTypeIndex = 1;
-
     //Elementos del UI
     private Switch switchGPS;
     private TextView textoUbicacionOrigen;
     private TextView textoUbicacionDestino;
     private Button buttonLlammarUber;
 
-    private enum state {ELIGIENDO_ORIGEN, LLAMANDO_YUBER, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
+    private enum state {ELIGIENDO_ORIGEN, BUSCANDO_YUBER, YUBER_EN_CAMINO, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
 
-    ;
+
     private state mActualState;
     private Fragment actualFragment = null;
 
@@ -131,12 +121,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         //seteando listener en boton
         Button botonOK = (Button) v.findViewById(R.id.button3);
-        ;
         botonOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switch (mActualState) {
-                    case LLAMANDO_YUBER:
-                        loginUser(v);
+                    case BUSCANDO_YUBER:
+                        loginUser();
                         break;
                     case DESTINO_ELEGIDO:
                         mostrarViajeFinalizado();
@@ -234,8 +223,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     protected BroadcastReceiver ActivityDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == state.LLAMANDO_YUBER) ){
-                mActualState = state.ELIGIENDO_DESTINO;
+            if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == state.BUSCANDO_YUBER) ){
+                mActualState = state.YUBER_EN_CAMINO;
                 displayView(mActualState);
                 String text = intent.getStringExtra("TEXT");
                 //textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
@@ -371,7 +360,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
 
-        googleMap.setMapType(MAP_TYPES[curMapTypeIndex]);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -478,7 +467,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             case ELIGIENDO_ORIGEN:
                 actualFragment = new MapCallYuberFragment();
                 break;
-            case LLAMANDO_YUBER:
+            case BUSCANDO_YUBER:
                 actualFragment = new MapWaitYFragment();
                 break;
             case ELIGIENDO_DESTINO:
@@ -508,11 +497,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 // Estados del boton en funcion de los clicks
                 switch (mActualState) {
                     case ELIGIENDO_ORIGEN:
-                        mActualState = state.LLAMANDO_YUBER;
+                        //Se pidio un Yuber
+                        mActualState = state.BUSCANDO_YUBER;
                         displayView(mActualState);
                         buttonLlammarUber.setText("CANCELAR YUBER");
                         break;
-                    case LLAMANDO_YUBER:
+                    case BUSCANDO_YUBER:
+                        //Se cancelo el Yuber pedido
                         mActualState = state.ELIGIENDO_ORIGEN;
                         displayView(mActualState);
                         if (mDestinationMarker != null)
@@ -541,9 +532,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     /**
      * Method gets triggered when Login button is clicked
      *
-     * @param view
+     * @param //view
      */
-    public void loginUser(View view){
+    public void loginUser(){
         //under button properties
         //android:onClick="loginUser"
 
