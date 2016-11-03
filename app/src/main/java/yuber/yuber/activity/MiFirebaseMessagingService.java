@@ -1,17 +1,14 @@
 package yuber.yuber.activity;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 public class MiFirebaseMessagingService extends FirebaseMessagingService {
@@ -38,9 +35,14 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 
 
+            sendValueToFragment1("mocoooo");
 
-            mostrarNotificacion(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+            //EventBus.getDefault().post(new MessageEvent("Vamos los piiiii!"));
+
+           // mostrarNotificacion(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }
+
+
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
@@ -60,9 +62,18 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 */
     }
 
+    protected void sendValueToFragment1(String text) {
+        Intent intent = new Intent("MapFragment.action.BOX_UPDATE");
+        intent.putExtra("TEXT", text);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+
+
     private void mostrarNotificacion(String title, String body) {
 
-        Intent homeIntent = new Intent(getApplicationContext(), MapActivity.class);
+        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //QUE ES ESTO? jaja
         startActivity(homeIntent);
 

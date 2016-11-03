@@ -1,6 +1,5 @@
 package yuber.yuber.activity;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -16,10 +15,7 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHeader;
@@ -27,22 +23,15 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.loopj.android.http.RequestParams;
-
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-
-import javax.net.ssl.HttpsURLConnection;
 
 import yuber.yuber.R;
 
@@ -93,6 +82,9 @@ public class LoginActivity extends AppCompatActivity {
         Button botonSaltearLogin = (Button) findViewById(R.id.button4);
         botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                saltearLogin(v);
+                // <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
+                /*
                 try {
                     invokeWS();
                 } catch (JSONException e) {
@@ -100,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                //saltearLogin(v);
+                */ // </editor-fold>
             }
         });
 
@@ -165,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
     public void saltearLogin(View view){
         //under button properties
         //android:onClick="loginUser"
-        Intent homeIntent = new Intent(getApplicationContext(), MapActivity.class);
+        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //QUE ES ESTO? jaja
         startActivity(homeIntent);
     }
@@ -252,7 +244,7 @@ public class LoginActivity extends AppCompatActivity {
         obj.put("usuarioApellido", "FAFAFA");
         obj.put("usuarioNombre", "Sancho");
         obj.put("usuarioPromedioPuntaje", 0.0);
-        obj.put("usuarioCorreo", "111111@Gmail.com");
+        obj.put("usuarioCorreo", "alfalfa@Gmail.com");
         obj.put("usuarioCiudad", "montevideo");
         obj.put("estado", "OK");
 
@@ -263,7 +255,7 @@ public class LoginActivity extends AppCompatActivity {
         rePost = 0;
         final Boolean[] funcionoWS = {false};
      //   while (rePost < 2 && !funcionoWS[0]){
-            client.post(null, "http://172.16.113.205:8080/YuberWEB/rest/Cliente/RegistrarCliente/", entity, "application/json", new AsyncHttpResponseHandler(){
+            client.post(null, "http://54.191.204.230:8080/YuberWEB/rest/Cliente/RegistrarCliente/", entity, "application/json", new AsyncHttpResponseHandler(){
                 // When the response returned by REST has Http response code '200'
                 @Override
                 public void onSuccess(String response) {

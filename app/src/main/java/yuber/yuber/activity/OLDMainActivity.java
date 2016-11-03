@@ -22,7 +22,7 @@ public class OLDMainActivity extends AppCompatActivity {
     }
 
     public void irMapa(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }

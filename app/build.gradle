@@ -36,10 +36,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.4.0'
     compile files('libs/android-async-http-1.4.4.jar')
 
-    /*android {
-        useLibrary 'org.apache.http.legacy'
-    }
-*/
+
+    compile 'org.greenrobot:eventbus:3.0.0'
 
 } // FIN  DEPENDENCIES
 

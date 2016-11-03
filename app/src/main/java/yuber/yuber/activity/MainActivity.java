@@ -1,11 +1,8 @@
 package yuber.yuber.activity;
 
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +14,7 @@ import android.view.View;
 
 import yuber.yuber.R;
 
-public class MapActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener  {
+public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener  {
 
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
@@ -73,15 +70,6 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
             return true;
         }
 
-        // Y ESTO??
-        // ES EL BUSCADOR QUE NO AGREGUE!
-        /*
-        if(id == R.id.action_search){
-            Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        */
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -99,7 +87,7 @@ public class MapActivity extends AppCompatActivity implements FragmentDrawer.Fra
                 title = getString(R.string.title_home);
                 break;
             case 1:
-                fragment = new MpFragment();
+                fragment = new MapFragment();
                 title = getString(R.string.title_map);
                 break;
             case 2:

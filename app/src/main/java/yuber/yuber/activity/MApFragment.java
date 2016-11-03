@@ -6,6 +6,10 @@ package yuber.yuber.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Geocoder;
@@ -15,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +46,9 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,7 +59,7 @@ import yuber.yuber.R;
 /**
  * A actualFragment that launches other parts of the demo application.
  */
-public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener,
@@ -148,7 +156,7 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
         prgDialog.setCancelable(false);
 
 
-
+// <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
       //  switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
 
 /*
@@ -188,6 +196,16 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
         });
 */
 
+// </editor-fold>
+
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+       // filter.addAction(ACTION_INTENT2);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
+
+
+
+
+            EventBus.getDefault().register(this);
 
 
         // Perform any camera updates here
@@ -195,6 +213,39 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
     }
 
 
+    // This method will be called when a MessageEvent is posted (in the UI thread for Toast)
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
+    }
+    /*
+    // This method will be called when a SomeOtherEvent is posted
+    @Subscribe
+    public void handleSomethingElse(SomeOtherEvent event) {
+        doSomethingWith(event);
+    }
+    */
+
+
+
+    public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
+    public static final String ACTION_INTENT2 = "fragment1.action.BOX_UPDATE";
+
+    protected BroadcastReceiver ActivityDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(ACTION_INTENT.equals(intent.getAction())) {
+                //displayView(state.ELIGIENDO_DESTINO);
+                String text = intent.getStringExtra("TEXT");
+                textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+                textoUbicacionOrigen.setText(text);
+            }
+           // if(ACTION_INTENT2.equals(intent.getAction())) {
+
+                //DO
+           // }
+        }
+    };
 
 
     @Override
@@ -386,6 +437,9 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
     @Override
     public void onMapClick(LatLng latLng) {
         MarkerOptions options;
+
+        EventBus.getDefault().post(new MessageEvent("Hello everyone!"));
+
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
                 switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
@@ -617,6 +671,7 @@ public class MpFragment extends Fragment implements OnMapReadyCallback, GoogleAp
 
         FragmentManager fragmentManager = getFragmentManager();
         new FragmentDialogFinViaje().show(fragmentManager, "FragmentDialogFinViaje");
+
     }
 
 
