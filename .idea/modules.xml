@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Yuber.iml" filepath="$PROJECT_DIR$/Yuber.iml" />
       <module fileurl="file://$PROJECT_DIR$/Yuber-Android.iml" filepath="$PROJECT_DIR$/Yuber-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

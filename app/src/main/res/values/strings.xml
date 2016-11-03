@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Yuber</string>
+    <string name="app_name">Yuber Cliente</string>
     <string name="registrarse">Registrarse</string>
     <string name="login">Login</string>
     <string name="title_activity_login">Sign in</string>
