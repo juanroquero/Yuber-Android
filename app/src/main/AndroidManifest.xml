@@ -29,9 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.OLDMainActivity"
-            android:label="@string/title_activity_login" />
 
         <service
             android:name=".activity.MiFirebaseMessagingService">
@@ -68,7 +65,9 @@
 
         EMPTY BODY NEXT ACTIVITY?? porque?
         -->
-        <activity android:name=".activity.MainActivity" />
+        <activity
+            android:name=".activity.MainActivity"/>
+
         <activity android:name=".activity.SignUpActivity"/>
     </application>
 

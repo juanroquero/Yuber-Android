@@ -19,7 +19,6 @@
         android:text="Servicios"
         android:textStyle="bold"/>
 
-        <include layout="@layout/list_layout"/>
 
     <!-- <ListView
          android:id="@+id/list_view"

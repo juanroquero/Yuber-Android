@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 saltearLogin(v);
                 // <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
-                /*
+ /*
                 try {
                     invokeWS();
                 } catch (JSONException e) {
@@ -179,7 +179,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable going back to the OLDMainActivity
         moveTaskToBack(true);
     }
 
@@ -235,16 +234,20 @@ public class LoginActivity extends AppCompatActivity {
         // Show Progress Dialog
         prgDialog.show();
 
-        // Make RESTful webservice call using AsyncHttpClient object
         JSONObject obj = new JSONObject();
 
-        obj.put("usuarioDireccion", "lsls123");
-        obj.put("usuarioContraseña", "123");
+
+
+
+        // Make RESTful webservice call using AsyncHttpClient object
+
+        obj.put("usuarioDireccion", "sanchofafafa");
+        obj.put("usuarioContraseña", "1234");
         obj.put("usuarioTelefono", "050505050");
         obj.put("usuarioApellido", "FAFAFA");
         obj.put("usuarioNombre", "Sancho");
-        obj.put("usuarioPromedioPuntaje", 0.0);
-        obj.put("usuarioCorreo", "alfalfa@Gmail.com");
+        obj.put("usuarioPromedioPuntaje", 3.0);
+        obj.put("usuarioCorreo", "FAFA@Gmail.com");
         obj.put("usuarioCiudad", "montevideo");
         obj.put("estado", "OK");
 
@@ -255,7 +258,8 @@ public class LoginActivity extends AppCompatActivity {
         rePost = 0;
         final Boolean[] funcionoWS = {false};
      //   while (rePost < 2 && !funcionoWS[0]){
-            client.post(null, "http://54.191.204.230:8080/YuberWEB/rest/Cliente/RegistrarCliente/", entity, "application/json", new AsyncHttpResponseHandler(){
+            //client.post(null, "http://54.191.204.230:8080/YuberWEB/rest/Cliente/RegistrarCliente/", entity, "application/json", new AsyncHttpResponseHandler(){
+            client.post(null, "http://54.191.204.230:8080/YuberWEB/rest/Proveedor/RegistrarProveedor/", entity, "application/json", new AsyncHttpResponseHandler(){
                 // When the response returned by REST has Http response code '200'
                 @Override
                 public void onSuccess(String response) {

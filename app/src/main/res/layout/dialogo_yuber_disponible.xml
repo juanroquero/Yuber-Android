@@ -14,7 +14,7 @@
         android:gravity="center"
         android:paddingBottom="@dimen/padding_between"
         android:paddingTop="@dimen/padding_between"
-        android:text="@string/viaje_fin_text"
+        android:text="@string/yuber_en_camino"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Yuber</string>
-    <string name="bienvenidos_a_yuber_si_es_tu_primera_vez_por_favor_ve_a_registrarse_de_lo_contrario_selecciona_login">Bienvenidos a Yuber! Si es tu primera vez por favor ve a registrarse, de lo contrario selecciona login</string>
     <string name="registrarse">Registrarse</string>
     <string name="login">Login</string>
     <string name="title_activity_login">Sign in</string>
@@ -77,8 +76,11 @@
     <string name="action_save">Guardar</string>
     <string name="title_activity_detail">Nueva Oportunidad</string>
 
-    <!-- Strings de diálogo personalizado -->
-    <string name="info_text">Su viaje ha terminado. Califique a su YUBER</string>
+
+    <string name="viaje_fin_text">Su viaje ha terminado. Califique a su Yuber</string>
+    <string name="yuber_en_camino">Su Yuber </string>
+
+    <!-- Strings de DIALOGOS- QUIZAS VARIOS DE MAS -->
     <string name="crear_boton">CREAR CUENTA</string>
     <string name="nombre_input">Nombre</string>
     <string name="contrasena_input">Constraseña</string>

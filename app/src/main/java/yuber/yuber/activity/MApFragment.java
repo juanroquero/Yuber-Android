@@ -234,11 +234,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     protected BroadcastReceiver ActivityDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(ACTION_INTENT.equals(intent.getAction())) {
-                //displayView(state.ELIGIENDO_DESTINO);
+            if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == state.LLAMANDO_YUBER) ){
+                mActualState = state.ELIGIENDO_DESTINO;
+                displayView(mActualState);
                 String text = intent.getStringExtra("TEXT");
-                textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-                textoUbicacionOrigen.setText(text);
+                //textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+               // textoUbicacionOrigen.setText(text);
             }
            // if(ACTION_INTENT2.equals(intent.getAction())) {
 
@@ -277,24 +278,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
           //  myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
         }
 
-        /*
-
-
-
-        // Getting LocationManager object from System Service LOCATION_SERVICE
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-
-
-        Location location = locationManager.getLastKnownLocation(provider);
-
-        if(location!=null){
-            onLocationChanged(location);
-        }
-        locationManager.requestLocationUpdates(provider, 20000, 0, this);
-*/
-      //  googleMap.addMarker(new MarkerOptions().position(myLocatLatLng).title("Ubicacion actual"));
-       // googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocatLatLng));
 
         initListeners();
     }
@@ -303,17 +286,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setHasOptionsMenu(true);
-
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-
-
-
     }
 
     private void initListeners() {
@@ -394,7 +372,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
 
         googleMap.setMapType(MAP_TYPES[curMapTypeIndex]);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -427,12 +406,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         marker.showInfoWindow();
         return true;
     }
-
-
-
-
-
-
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -668,16 +641,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
     private void mostrarViajeFinalizado(){
-
         FragmentManager fragmentManager = getFragmentManager();
         new FragmentDialogFinViaje().show(fragmentManager, "FragmentDialogFinViaje");
-
     }
-
-
-
-
-
 
 
     @Override

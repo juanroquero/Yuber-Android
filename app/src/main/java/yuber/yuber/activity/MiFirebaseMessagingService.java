@@ -10,6 +10,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Objects;
+
 
 public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -28,6 +30,17 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+
+            String tituloNotificacion = remoteMessage.getNotification().getTitle();
+
+            Log.d(TAG, "Message title: " + tituloNotificacion );
+
+            if (tituloNotificacion.equals("Proveedor acepto viaje"))
+                sendBodyToMapFragment(remoteMessage.getNotification().getBody());
+
+
+
         }
 
         // Check if message contains a notification payload.
@@ -35,7 +48,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 
 
-            sendValueToFragment1("mocoooo");
+            //sendValueToFragment1("mocoooo");
 
             //EventBus.getDefault().post(new MessageEvent("Vamos los piiiii!"));
 
@@ -62,7 +75,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 */
     }
 
-    protected void sendValueToFragment1(String text) {
+    protected void sendBodyToMapFragment(String text) {
         Intent intent = new Intent("MapFragment.action.BOX_UPDATE");
         intent.putExtra("TEXT", text);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
