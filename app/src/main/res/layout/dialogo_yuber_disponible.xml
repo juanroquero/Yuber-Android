@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/info_text"
+        android:id="@+id/yuber_en_camino"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -16,7 +16,6 @@
         android:paddingTop="@dimen/padding_between"
         android:text="@string/yuber_en_camino"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
 
 
     <RatingBar
@@ -30,20 +29,36 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="53dp"
         android:layout_marginEnd="53dp"
-        android:layout_below="@+id/info_text"/>
+        android:layout_below="@+id/yuber_en_camino"/>
 
 
-    <Button
-        android:id="@+id/entrar_boton"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="@dimen/button_padding"
-        android:paddingTop="@dimen/button_padding"
-        android:text="OK"
-        android:textColor="@android:color/black"
-        android:layout_below="@+id/ratingBar" />
+        android:layout_below="@+id/ratingBarYuberDispo">
+
+        <Button
+            android:id="@+id/boton_aceptar_yuber"
+            android:text="ACEPTAR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/button_padding"
+            android:paddingTop="@dimen/button_padding"
+            android:paddingRight="@dimen/fab_margin"
+            android:textColor="@android:color/black"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/boton_cancelar_yuber"
+            android:text="CANCELAR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/button_padding"
+            android:paddingTop="@dimen/button_padding"
+            android:paddingLeft="@dimen/fab_margin"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 
 </RelativeLayout>

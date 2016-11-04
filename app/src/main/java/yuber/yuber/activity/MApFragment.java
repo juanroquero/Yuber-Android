@@ -101,7 +101,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
+        } catch (Exception e) { //comentario
             e.printStackTrace();
         }
 
@@ -129,6 +129,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         break;
                     case DESTINO_ELEGIDO:
                         mostrarViajeFinalizado();
+                        break;
+                    case ELIGIENDO_DESTINO:
                         break;
                     default:
                         break;
@@ -469,6 +471,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 break;
             case BUSCANDO_YUBER:
                 actualFragment = new MapWaitYFragment();
+                break;
+            case YUBER_EN_CAMINO:
+                actualFragment = new MapYubConfirmadoFragment();
                 break;
             case ELIGIENDO_DESTINO:
                 //ELEGIR DESTINO /// AGREGAR CODIGO

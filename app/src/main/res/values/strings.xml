@@ -70,7 +70,7 @@
 
 
     <!-- ################################### -->
-    <!-- Strings relativos a los dialogos. Seguro hay varios de mas -->
+    <!-- Strings relativos a los dialogos.  -->
     <string name="title">Título</string>
 
     <string name="action_save">Guardar</string>
@@ -78,9 +78,9 @@
 
 
     <string name="viaje_fin_text">Su viaje ha terminado. Califique a su Yuber</string>
-    <string name="yuber_en_camino">Su Yuber </string>
+    <string name="yuber_en_camino">Su Yuber se encuentra en camino </string>
 
-    <!-- Strings de DIALOGOS- QUIZAS VARIOS DE MAS -->
+    <!-- Strings de DIALOGOS- Seguro hay  VARIOS DE MAS -->
     <string name="crear_boton">CREAR CUENTA</string>
     <string name="nombre_input">Nombre</string>
     <string name="contrasena_input">Constraseña</string>
