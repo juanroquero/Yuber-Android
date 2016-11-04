@@ -124,6 +124,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         botonOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switch (mActualState) {
+                    case ELIGIENDO_ORIGEN:
+                        //mostrarViajeFinalizado();
+                        mostrarDialAceptarProveedor("SANTA");
+                        break;
                     case BUSCANDO_YUBER:
                         loginUser();
                         break;
@@ -228,7 +232,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == state.BUSCANDO_YUBER) ){
                 mActualState = state.YUBER_EN_CAMINO;
                 displayView(mActualState);
-                String text = intent.getStringExtra("TEXT");
+                String jsonProveedor = intent.getStringExtra("TEXT");
+                mostrarDialAceptarProveedor(jsonProveedor);
                 //textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
                // textoUbicacionOrigen.setText(text);
             }
@@ -635,10 +640,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
 
-
     private void mostrarViajeFinalizado(){
-        FragmentManager fragmentManager = getFragmentManager();
-        new FragmentDialogFinViaje().show(fragmentManager, "FragmentDialogFinViaje");
+
+
+        Bundle args = new Bundle();
+        args.putString("key", "value");
+        FragmentDialogFinViaje newFragment = new FragmentDialogFinViaje();
+        newFragment.setArguments(args);
+        newFragment.show(getActivity().getSupportFragmentManager(), "TAG");
+    }
+
+    private void mostrarDialAceptarProveedor(String jProveedor){
+
+        Bundle args = new Bundle();
+        args.putString("datos", jProveedor);
+        FragmentDialogYuberDisponible newFragmentDialog = new FragmentDialogYuberDisponible();
+        newFragmentDialog.setArguments(args);
+        newFragmentDialog.show(getActivity().getSupportFragmentManager(), "TAG");
+
     }
 
 

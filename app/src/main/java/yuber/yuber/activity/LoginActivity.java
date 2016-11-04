@@ -376,9 +376,8 @@ public class LoginActivity extends AppCompatActivity {
             if(con!=null)
                 con.disconnect();
         }
-
-
     }
+
     public boolean sendPost2() throws JSONException {
         RequestParams params = new RequestParams();
         JSONObject obj = new JSONObject();

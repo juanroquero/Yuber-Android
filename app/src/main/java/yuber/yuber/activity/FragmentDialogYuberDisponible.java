@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +43,9 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
     public AlertDialog createLoginDialogo() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        String proveedorString = getArguments().getString("proveedorJson");
+       // String proveedorString = getArguments().getString("proveedorJson");
+        String proveedorString = getArguments().getString("datos");
+
 
         try {
             mProveedor = new JSONObject(proveedorString);
@@ -52,22 +55,42 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View v = inflater.inflate(R.layout.dialogo_fin_viaje, null);
+        View v = inflater.inflate(R.layout.dialogo_yuber_disponible, null);
 
         builder.setView(v);
 
 
-        RatingBar ratingBarYuber = (RatingBar) v.findViewById(R.id.ratingBarYuberDispo);
+       // RatingBar ratingBarYuber = (RatingBar) v.findViewById(R.id.ratingBarYuberDispo);
         //ratingBarYuber.setRating();
 
 
 
-        Button signup = (Button) v.findViewById(R.id.entrar_boton);
-        Button signin = (Button) v.findViewById(R.id.entrar_boton);
+        TextView textoNombreProv = (TextView) v.findViewById(R.id.text_dialog_yub_disp_nombre);
+        TextView textoAppellidoProv = (TextView) v.findViewById(R.id.text_dialog_yub_disp_apellido);
+        TextView textoMarcaModProv = (TextView) v.findViewById(R.id.text_dialog_yub_disp_marca);
+        TextView textoTelefonoProv = (TextView) v.findViewById(R.id.text_dialog_yub_disp_telefono);
+        RatingBar ratingBarPuntajeProv = (RatingBar) v.findViewById(R.id.ratingBarYuberDispo);
+
+        double puntaje = 0;
+        try {
+            textoNombreProv.setText(mProveedor.getString("usuarioNombre"));
+            textoAppellidoProv.setText(mProveedor.getString("usuarioApellido"));
+            textoMarcaModProv.setText(mProveedor.getString("marca") + " " + mProveedor.getString("modelo"));
+            textoTelefonoProv.setText(mProveedor.getString("usuarioTelefono"));
+            puntaje = mProveedor.getDouble("usuarioPromedioPuntaje");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        ratingBarPuntajeProv.setRating(((float) puntaje));
+
+        Button botonAceptar = (Button) v.findViewById(R.id.boton_aceptar_yuber);
+        Button botonCancelar = (Button) v.findViewById(R.id.boton_cancelar_yuber);
 
         Log.d(TAG, "Se creo el dialogo con el login");
 
-        signup.setOnClickListener(
+        botonAceptar.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -77,7 +100,7 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
                 }
         );
 
-        signin.setOnClickListener(
+        botonCancelar.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
