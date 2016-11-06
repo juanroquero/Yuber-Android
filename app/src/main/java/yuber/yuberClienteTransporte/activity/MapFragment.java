@@ -70,6 +70,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
 
+    public static final String TAG = "MAPA";
+
     private String Ip = "54.191.204.230";
     private String Puerto = "8080";
 
@@ -96,7 +98,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     //Banderas del broadcaster
     public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
-    public static final String ACTION_INTENT2 = "fragment1.action.BOX_UPDATE";
+    public static final String ACTION_MI_UBICACION = "fragment1.action.MI_UBICACION";
 
 
     // Progress Dialog Object
@@ -219,6 +221,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         EventBus.getDefault().register(this);
 
+        Log.d(TAG, "SE CREO EL MAPA");
+
 
         // Perform any camera updates here
         return v;
@@ -228,7 +232,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     // This method will be called when a MessageEvent is posted (in the UI thread for Toast)
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "ADENTRO del eventbus: " + event.message);
+
+        if (event.message.toString().equals("Mi Ubicacion")){
+
+            LatLng myActualLatLng;
+            if(mCurrentLocation!= null)
+                myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
+            else
+                myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+            // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+            //
+            CameraPosition position = CameraPosition.builder()
+                    .target(myActualLatLng)
+                    .zoom(16f)
+                    .bearing(0.0f)
+                    .tilt(0.0f)
+                    .build();
+
+            if (mDestinationMarker != null)
+                mDestinationMarker.remove();
+
+            //marker inicial
+            mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
+
+            MarkerOptions options;
+
+            options = new MarkerOptions().position(myActualLatLng);
+            options.title(getAddressFromLatLng(myActualLatLng));
+            options.icon(BitmapDescriptorFactory.defaultMarker());
+            mDestinationMarker = googleMap.addMarker(options);
+
+            textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+            textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
+
+
+            //Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
+
+
+        }
+
     }
     /*
     // This method will be called when a SomeOtherEvent is posted
@@ -248,10 +291,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 displayView(mActualState);
                 mostrarDialAceptarProveedor(jsonProveedor);
             }
-            // if(ACTION_INTENT2.equals(intent.getAction())) {
+             if(ACTION_MI_UBICACION.equals(intent.getAction())) {
+                 Log.d(TAG, "ADENTRO DEL ACTION_MI_UBICACION: ");
+
+
 
             //DO
-            // }
+             }
         }
     };
 
@@ -376,7 +422,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         //marker inicial
         mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
 
+        textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+        textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
+
+
+
+
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+
+
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -417,8 +471,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onMapClick(LatLng latLng) {
         MarkerOptions options;
-
-        EventBus.getDefault().post(new MessageEvent("Hello everyone!"));
 
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
