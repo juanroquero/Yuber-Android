@@ -2,15 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="yuber.yuber.activity.MapCallYuberFragment">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal"
+    tools:context="yuber.yuberClienteTransporte.activity.MapCallYuberFragment">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/fab_margin"
+        android:paddingBottom="@dimen/fab_margin"
+        android:paddingLeft="@dimen/fab_margin"
+        android:paddingRight="@dimen/fab_margin"
+        android:gravity="center_horizontal"
         android:id="@+id/bottomLayoutAskingForYuber">
 
         <Switch
@@ -21,35 +25,39 @@
             android:layout_gravity="center"
             android:enabled="true"
             android:checked="true"
+            android:visibility="gone"
             android:textColor="#DF000000" />
 
-        <TableLayout
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/y"
-            android:elevation="@dimen/abc_action_bar_subtitle_top_margin_material"
-            android:showDividers="middle|beginning|end"
-            android:gravity="center_vertical">
+            android:text="Origen"
+            android:id="@+id/textView2"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:enabled="true"
+            android:textColor="#DF000000"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Origen"
-                android:id="@+id/textView2"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:enabled="true"
-                android:textColor="#DF000000"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ubicacion actual"
+            android:id="@+id/textUbicacionOrigen"
+            android:layout_gravity="center_horizontal|bottom"
+            android:gravity="bottom|center_horizontal"
+            android:textColor="#5F000000"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ubicacion actual"
-                android:id="@+id/textUbicacionOrigen"
-                android:layout_gravity="center_horizontal|bottom"
-                android:gravity="bottom|center_horizontal"
-                android:textColor="#5F000000"/>
-        </TableLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MI UBICACION"
+            android:theme="@style/MyMaterialTheme"
+            android:textColor="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
+
+
     </LinearLayout>
 
 </RelativeLayout>

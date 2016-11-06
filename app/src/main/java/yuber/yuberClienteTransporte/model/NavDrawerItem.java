@@ -1,4 +1,4 @@
-package yuber.yuber.model;
+package yuber.yuberClienteTransporte.model;
 
 /**
  * Created by Agustin on 19-Oct-16.

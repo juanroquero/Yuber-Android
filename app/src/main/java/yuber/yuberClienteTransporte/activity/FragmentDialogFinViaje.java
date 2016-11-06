@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 /**
  * Fragmento con un diálogo personalizado

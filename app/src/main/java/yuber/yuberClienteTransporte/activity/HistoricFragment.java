@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 /**
  * Created by Agustin on 28-Oct-16.
@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;;import java.util.ArrayList;
 import java.util.List;
 
-import yuber.yuber.R;
-import yuber.yuber.adapter.HistorialAdapter;
+import yuber.yuberClienteTransporte.R;
+import yuber.yuberClienteTransporte.adapter.HistorialAdapter;
 
 public class HistoricFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package yuber.yuber;
+package yuber.yuberClienteTransporte;
 
 import org.junit.Test;
 

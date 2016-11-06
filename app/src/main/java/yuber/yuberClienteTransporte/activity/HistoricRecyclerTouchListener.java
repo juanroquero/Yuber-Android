@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

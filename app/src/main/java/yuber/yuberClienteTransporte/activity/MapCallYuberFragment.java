@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 /**
  * Created by Agustin on 20-Oct-16.
@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 
-public class HomeFragment extends Fragment {
+public class MapCallYuberFragment extends Fragment {
 
-    public HomeFragment() {
+
+
+    public MapCallYuberFragment() {
         // Required empty public constructor
     }
 
@@ -28,7 +30,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_map_calling, container, false);
 
 
         // Inflate the layout for this fragment

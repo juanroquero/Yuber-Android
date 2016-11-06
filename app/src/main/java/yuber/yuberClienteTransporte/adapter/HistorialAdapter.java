@@ -1,4 +1,4 @@
-package yuber.yuber.adapter;
+package yuber.yuberClienteTransporte.adapter;
 
 /**
  * Created by Agustin on 28-Oct-16.
@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import yuber.yuber.R;
-import yuber.yuber.activity.Movie;
+import yuber.yuberClienteTransporte.R;
+import yuber.yuberClienteTransporte.activity.Movie;
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyViewHolder> {
 

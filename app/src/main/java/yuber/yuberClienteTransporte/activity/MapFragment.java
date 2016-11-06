@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 
 import android.Manifest;
@@ -41,8 +41,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.RequestHandle;
 
+
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -50,8 +54,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 /**
  * A actualFragment that launches other parts of the demo application.
@@ -62,6 +67,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerClickListener {
+
+
+
+    private String Ip = "54.191.204.230";
+    private String Puerto = "8080";
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -77,11 +87,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private TextView textoUbicacionDestino;
     private Button buttonLlammarUber;
 
-    private enum state {ELIGIENDO_ORIGEN, BUSCANDO_YUBER, YUBER_EN_CAMINO, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
+    private enum mapState {ELIGIENDO_ORIGEN, BUSCANDO_YUBER, YUBER_EN_CAMINO, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
 
 
-    private state mActualState;
+    private mapState mActualState;
     private Fragment actualFragment = null;
+
+
+    //Banderas del broadcaster
+    public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
+    public static final String ACTION_INTENT2 = "fragment1.action.BOX_UPDATE";
+
 
     // Progress Dialog Object
     ProgressDialog prgDialog;
@@ -112,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
         buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
-        mActualState = state.ELIGIENDO_ORIGEN;
+        mActualState = mapState.ELIGIENDO_ORIGEN;
         displayView(mActualState);
 
         //seteando listener en boton
@@ -126,10 +142,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 switch (mActualState) {
                     case ELIGIENDO_ORIGEN:
                         //mostrarViajeFinalizado();
-                        mostrarDialAceptarProveedor("SANTA");
+                        String test1 = "{\"usuarioPromedioPuntaje\":2.5,\"usuarioCorreo\":\"maxi@gmail.com\", \"usuarioTelefono\":\"098839498\",\"usuarioNombre\":\"ElMasi\",\"usuarioApellido\":\"Barnech\", \"marca\":\"BMW\", \"modelo\":\"320\",\"estado\":\"Ok\"}";
+                        mostrarDialAceptarProveedor(test1);
                         break;
                     case BUSCANDO_YUBER:
-                        loginUser();
+                        String test = "{\"usuarioPromedioPuntaje\":2.5,\"usuarioCorreo\":\"maxi@gmail.com\", \"usuarioTelefono\":\"098839498\",\"usuarioNombre\":\"ElMasi\",\"usuarioApellido\":\"Barnech\", \"marca\":\"BMW\", \"modelo\":\"320\",\"estado\":\"Ok\"}";
+                        mostrarDialAceptarProveedor(test);
+                        //login_user()
                         break;
                     case DESTINO_ELEGIDO:
                         mostrarViajeFinalizado();
@@ -152,7 +171,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
 // <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
-      //  switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
+        //  switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
 
 /*
         // EVENTO ASOCIADO AL SWITCH
@@ -194,20 +213,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 // </editor-fold>
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
-       // filter.addAction(ACTION_INTENT2);
+        // filter.addAction(ACTION_INTENT2);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
 
 
-
-
-            EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
 
 
         // Perform any camera updates here
         return v;
-    }
+    } // FIN onCreate()
 
-
+    // TO DELETE OR REUSE XXXX
     // This method will be called when a MessageEvent is posted (in the UI thread for Toast)
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
@@ -221,26 +238,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
     */
 
-
-
-    public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
-    public static final String ACTION_INTENT2 = "fragment1.action.BOX_UPDATE";
-
     protected BroadcastReceiver ActivityDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == state.BUSCANDO_YUBER) ){
-                mActualState = state.YUBER_EN_CAMINO;
+            if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == mapState.BUSCANDO_YUBER) ){
+                //Si llega una notificacion "Proveedor acepto viaje" y se esta buscando Yuber
+                String jsonProveedor = intent.getStringExtra("DATOS_PROVEEDOR");
+                mActualState = mapState.YUBER_EN_CAMINO;
                 displayView(mActualState);
-                String jsonProveedor = intent.getStringExtra("TEXT");
                 mostrarDialAceptarProveedor(jsonProveedor);
-                //textoUbicacionOrigen =  (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-               // textoUbicacionOrigen.setText(text);
             }
-           // if(ACTION_INTENT2.equals(intent.getAction())) {
+            // if(ACTION_INTENT2.equals(intent.getAction())) {
 
-                //DO
-           // }
+            //DO
+            // }
         }
     };
 
@@ -271,7 +282,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             myLocatLatLng = mdeoLatLng;
         }
         else{
-          //  myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
+            //  myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
         }
 
 
@@ -353,7 +364,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             myActualLatLng = new LatLng( location.getLatitude(),location.getLongitude() );//new LatLng(-34.9, -56.16);
         else
             myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
-       // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+        // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
         //
         CameraPosition position = CameraPosition.builder()
                 .target(myActualLatLng)
@@ -469,7 +480,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
 
-    private void displayView(state estado) {
+    private void displayView(mapState estado) {
         switch (estado) {
             case ELIGIENDO_ORIGEN:
                 actualFragment = new MapCallYuberFragment();
@@ -495,7 +506,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if (actualFragment != null) {
             FragmentManager fragmentManager = getChildFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.FlashBarLayout, actualFragment);
+            fragmentTransaction.replace(R.id.containerMiniFrameMapFragment, actualFragment);
             fragmentTransaction.commit();
         }
     }
@@ -508,13 +519,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 switch (mActualState) {
                     case ELIGIENDO_ORIGEN:
                         //Se pidio un Yuber
-                        mActualState = state.BUSCANDO_YUBER;
+                        mActualState = mapState.BUSCANDO_YUBER;
                         displayView(mActualState);
                         buttonLlammarUber.setText("CANCELAR YUBER");
+                        //BUSCAR LA UBICACION, MANDARLA EN PEDIR SERVICIO Y BLOQUEAR EL EL ORIGEN...
+                        pedirServicio();
                         break;
                     case BUSCANDO_YUBER:
                         //Se cancelo el Yuber pedido
-                        mActualState = state.ELIGIENDO_ORIGEN;
+                        mActualState = mapState.ELIGIENDO_ORIGEN;
                         displayView(mActualState);
                         if (mDestinationMarker != null)
                             mDestinationMarker.remove();
@@ -524,7 +537,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         //ELEGIR DESTINO /// AGREGAR CODIGO
                         if (mDestinationMarker != null) { //.isVisible())
 
-                            mActualState = state.DESTINO_ELEGIDO;
+                            mActualState = mapState.DESTINO_ELEGIDO;
                             buttonLlammarUber.setEnabled(false);
                         } else
                             Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
@@ -539,114 +552,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         return clickListtener;
     }
 
-    /**
-     * Method gets triggered when Login button is clicked
-     *
-     * @param //view
-     */
-    public void loginUser(){
-        //under button properties
-        //android:onClick="loginUser"
 
-        // Instantiate Http Request Param Object
-        RequestParams params = new RequestParams();
-        // When Email Edit View and Password Edit View have values other than Null
-
-        params.put("lat", "43"); //http://api.geonames.org/findNearByWeatherJSON?lat=43&lng=-2&username=demo
-        params.put("lng", "-2");
-        params.put("username", "demo");
-       /*
-        // Put Http parameter username with value of Email Edit View control
-        params.put("username", email);
-        // Put Http parameter password with value of Password Edit Value control
-        params.put("password", password);
-        */
-        // Invoke RESTful Web Service with Http parameters
-        invokeWS(params);
-
-    }
-
-    /**
-     * Method that performs RESTful webservice invocations
-     *
-     * @param params
-     */
-    public void invokeWS(RequestParams params){
-        // Show Progress Dialog
-        //prgDialog.show();
-        // Make RESTful webservice call using AsyncHttpClient object
-        //  SyncHttpClient client = new SyncHttpClient();
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        //client.get("http://api.geonames.org/findNearByWeatherJSON?",params ,new AsyncHttpResponseHandler() {
-        client.get("http://api.geonames.org/findNearByWeatherJSON?",params ,new AsyncHttpResponseHandler() {
-            // ANTERIOR
-            // client.get("http://192.168.2.2:9999/useraccount/login/dologin",params ,new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-                // Hide Progress Dialog
-                //prgDialog.hide();
-                try {
-                    // JSON Object
-                    JSONObject obj = new JSONObject(response);
-                    Boolean funcionaWS = true;
-                    if (obj.has("status"))
-                        funcionaWS = obj.get("status").toString().contains("been exceeded");
-                    else
-                        funcionaWS = obj.has("weatherObservation");
-
-                    // When the JSON response has status boolean value assigned with true
-                    if( funcionaWS){ //|| obj.getString()
-                        Toast.makeText(getActivity().getApplicationContext(), "Se conecto con el WS!", Toast.LENGTH_LONG).show();
-                        // Navigate to Home screen
-                        mActualState = state.ELIGIENDO_DESTINO;
-                        buttonLlammarUber.setText("ELEGIR DESTINO");
-                        displayView(state.ELIGIENDO_DESTINO);
-                    }
-                    // Else display error message
-                    else{
-                        //errorMsg.setText(obj.getString("error_msg"));
-                        //Toast.makeText(getApplicationContext(), obj.getString("error_msg"), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getActivity().getApplicationContext(), obj.toString(), Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    Toast.makeText(getActivity().getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-
-                }
-            }
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // Hide Progress Dialog
-                prgDialog.hide();
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
 
 
     private void mostrarViajeFinalizado(){
 
-
-        Bundle args = new Bundle();
-        args.putString("key", "value");
+        //A USARSE EN UN FUTURO PARA MANDAR ARGUMENTOS
+        // Bundle args = new Bundle();
+        // args.putString("key", "value");
         FragmentDialogFinViaje newFragment = new FragmentDialogFinViaje();
-        newFragment.setArguments(args);
+        // newFragment.setArguments(args);
         newFragment.show(getActivity().getSupportFragmentManager(), "TAG");
     }
 
@@ -657,6 +572,75 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         FragmentDialogYuberDisponible newFragmentDialog = new FragmentDialogYuberDisponible();
         newFragmentDialog.setArguments(args);
         newFragmentDialog.show(getActivity().getSupportFragmentManager(), "TAG");
+
+    }
+
+
+    private void pedirServicio(){
+
+
+
+
+
+        /*****************  Consulta a BD si existe el user ********************/
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/PedirServicio";
+        JSONObject obj = new JSONObject();
+        try {
+            //LA CHANCHA
+
+            JSONObject jsonOrigen = new JSONObject();
+            jsonOrigen.put("longitud", mCurrentLocation.getLongitude());
+            jsonOrigen.put("latitud", mCurrentLocation.getLatitude());
+            jsonOrigen.put("estado", "Ok");
+
+            obj.put("correo", "maxi@hotmail.com");
+            obj.put("servicioId", 2);
+            obj.put("ubicacion", jsonOrigen);
+
+            //LA POSTA
+            /*
+            obj.put("correo", email);
+            obj.put("password", password);
+            obj.put("deviceId", token);
+            */
+
+        } catch (JSONException e) {
+            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        AsyncHttpClient client = new AsyncHttpClient();
+        ByteArrayEntity entity = null;
+        try {
+            entity = new ByteArrayEntity(obj.toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        RequestHandle Rq = client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                if (response.contains("true") ){
+                    //guardo token y email
+                    Toast.makeText(getActivity().getApplicationContext(), "se pidio el servicio PAPAA", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "El usuario y/o contraseña son incorrectos", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+               // DESCOMENTAR XXXX
+                // mActualState = mapState.ELIGIENDO_ORIGEN;
+               // displayView(mapState.ELIGIENDO_ORIGEN);
+                if(statusCode == 404){
+                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
 
     }
 

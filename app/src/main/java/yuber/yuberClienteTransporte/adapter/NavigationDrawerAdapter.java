@@ -1,4 +1,4 @@
-package yuber.yuber.adapter;
+package yuber.yuberClienteTransporte.adapter;
 
 /**
  * Created by Agustin on 19-Oct-16.
@@ -13,8 +13,8 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import yuber.yuber.R;
-import yuber.yuber.model.NavDrawerItem;
+import yuber.yuberClienteTransporte.R;
+import yuber.yuberClienteTransporte.model.NavDrawerItem;
 
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.MyViewHolder> {

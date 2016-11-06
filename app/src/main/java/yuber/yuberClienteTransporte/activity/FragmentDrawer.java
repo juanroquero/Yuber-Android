@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 
 import android.os.Bundle;
@@ -6,9 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 
 import android.content.Context;
@@ -23,8 +22,8 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import yuber.yuber.adapter.NavigationDrawerAdapter;
-import yuber.yuber.model.NavDrawerItem;
+import yuber.yuberClienteTransporte.adapter.NavigationDrawerAdapter;
+import yuber.yuberClienteTransporte.model.NavDrawerItem;
 
 public class FragmentDrawer extends Fragment {
 

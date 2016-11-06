@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
@@ -8,10 +8,6 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.Objects;
-
 
 public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -19,7 +15,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-  //      super.onMessageReceived(remoteMessage);
+        //      super.onMessageReceived(remoteMessage);
 
 
 
@@ -36,7 +32,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
             Log.d(TAG, "Message title: " + tituloNotificacion );
 
-            if (tituloNotificacion.equals("Proveedor acepto viaje"))
+            if (tituloNotificacion.equals("Tu Yuber esta en camino"))
                 sendBodyToMapFragment(remoteMessage.getNotification().getBody());
 
 
@@ -52,7 +48,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
             //EventBus.getDefault().post(new MessageEvent("Vamos los piiiii!"));
 
-           // mostrarNotificacion(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+            // mostrarNotificacion(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }
 
 
@@ -62,7 +58,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
 
         //       String from = remoteMessage.getFrom();
- //       Log.d(TAG, "Mensaje recibido de: " + from);
+        //       Log.d(TAG, "Mensaje recibido de: " + from);
 /*
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Notificación: " + remoteMessage.getNotification().getBody());
@@ -77,7 +73,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
     protected void sendBodyToMapFragment(String text) {
         Intent intent = new Intent("MapFragment.action.BOX_UPDATE");
-        intent.putExtra("TEXT", text);
+        intent.putExtra("DATOS_PROVEEDOR", text);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

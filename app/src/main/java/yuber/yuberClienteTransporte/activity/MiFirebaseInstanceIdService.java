@@ -1,8 +1,5 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
-import android.util.Log;
-
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 

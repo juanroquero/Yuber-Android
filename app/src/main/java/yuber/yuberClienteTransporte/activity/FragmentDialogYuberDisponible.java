@@ -1,7 +1,6 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.app.Dialog;
-import android.media.Rating;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 /**
  * Fragmento con un diálogo personalizado

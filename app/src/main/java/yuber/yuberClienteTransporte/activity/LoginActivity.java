@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.app.ProgressDialog;
@@ -33,7 +33,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";

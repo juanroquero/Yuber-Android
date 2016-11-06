@@ -1,4 +1,4 @@
-package yuber.yuber.activity;
+package yuber.yuberClienteTransporte.activity;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-import yuber.yuber.R;
+import yuber.yuberClienteTransporte.R;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener  {
 
