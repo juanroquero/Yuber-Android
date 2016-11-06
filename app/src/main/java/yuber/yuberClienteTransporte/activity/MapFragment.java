@@ -254,7 +254,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 mDestinationMarker.remove();
 
             //marker inicial
-            mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
+            //mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
 
             MarkerOptions options;
 
