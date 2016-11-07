@@ -52,7 +52,7 @@ public class MapCallYuberFragment extends Fragment {
             public void onClick(View v) {
 
 
-                EventBus.getDefault().post(new MessageEvent("Mi Ubicacion"));
+              //  EventBus.getDefault().post(new MessageEvent("Mi Ubicacion"));
                 Intent intent = new Intent("MapFragment.action.MI_UBICACION");
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 

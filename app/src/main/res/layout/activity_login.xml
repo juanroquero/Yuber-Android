@@ -12,14 +12,6 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Saltear Login"
-            android:id="@+id/button4"
-            android:layout_gravity="right"
-            android:onClick="saltearLogin"/>
-
         <ImageView android:src="@drawable/yuberlogo"
             android:layout_width="wrap_content"
             android:layout_height="72dp"
@@ -59,7 +51,8 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:text="Login"/>
+            android:text="Login"
+            android:onClick="EventoLogin"/>
 
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"

@@ -1,6 +1,8 @@
 package yuber.yuberClienteTransporte.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,7 +13,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestHandle;
+
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 import yuber.yuberClienteTransporte.R;
 
@@ -19,6 +34,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
+
+    private String Ip = "54.213.51.6";
+    private String Puerto = "8080";
+
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String EmailKey = "emailKey";
+    public static final String TokenKey = "tokenKey";
+    SharedPreferences sharedpreferences;
 
 
     @Override
@@ -70,6 +93,15 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if (id == R.id.action_settings) {
             return true;
         }
+
+
+        if (id == R.id.action_cerrar_sesion) {
+            SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+            String email = sharedpreferences.getString(EmailKey, "");
+            CerrarSesion(email);
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -125,4 +157,58 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         startActivity(intent);
         finish();
     }
+
+    public void CerrarSesion(String email){
+        SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String token = sharedpreferences.getString(TokenKey, "");
+        //
+        // TODO AGREGAR ABANDONAR SERVICIO
+        //
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/Logout";
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("correo", email);
+            obj.put("password","");
+            obj.put("deviceId",token);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        AsyncHttpClient client = new AsyncHttpClient();
+        ByteArrayEntity entity = null;
+        try {
+            entity = new ByteArrayEntity(obj.toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        RequestHandle Rq = client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                if (response.contains("true") ){
+                    cambiarALogin();
+                }else{
+                    Toast.makeText(getApplicationContext(), "No se pudo cerrar la sesión. Vuelva a intentar.", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public void cambiarALogin(){
+        Intent homeIntent = new Intent(getApplicationContext(), LoginActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+    }
+
+
+
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="yuber.yuberClienteTransporte">
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -22,7 +22,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
-        <activity android:name="yuber.yuberClienteTransporte.activity.LoginActivity">
+        <!-- <activity android:name="yuber.yuberClienteTransporte.activity.Intro">
+        -->
+        <activity android:name="yuber.yuberClienteTransporte.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,16 +39,14 @@
             </intent-filter>
         </service>
 
-        <!--
-        VA LO DE ABAJO?
-        -->
+        <!-- VA LO DE ABAJO? para que es? -->
         <service
             android:name="yuber.yuberClienteTransporte.activity.MiFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
-
+        <!--FIN SE ELIMINA? -->
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -55,20 +55,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+
+        <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name="yuber.yuberClienteTransporte.activity.Intro"/>
         <!--
-        JUAN ESCRIBIO ESTO? ERROR?
-             !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-
-        EMPTY BODY NEXT ACTIVITY?? porque?
-        -->
-        <activity
-            android:name="yuber.yuberClienteTransporte.activity.MainActivity"/>
-
-        <activity android:name="yuber.yuberClienteTransporte.activity.SignUpActivity"/>
+        <activity android:name="yuber.yuberClienteTransporte.activity.MainActivity"/>
+                            -->
     </application>
 
 </manifest>

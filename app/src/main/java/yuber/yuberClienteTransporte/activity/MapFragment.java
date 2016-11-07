@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -66,22 +69,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener,
+        LocationListener{
 
 
 
     public static final String TAG = "MAPA";
 
-    private String Ip = "54.191.204.230";
+    private String Ip = "54.213.51.6";
     private String Puerto = "8080";
 
     MapView mMapView;
     private GoogleMap googleMap;
     private static int REQUEST_LOCATION;
 
+    //del tutorial https://androidkennel.org/android-tutorial-getting-the-users-location/ para manejar el identificador del permiso concedido
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
     private Marker mDestinationMarker;
+
+    //
+    LocationRequest mLocationRequest;
+
+
 
     //Elementos del UI
     private Switch switchGPS;
@@ -98,7 +110,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     //Banderas del broadcaster
     public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
-    public static final String ACTION_MI_UBICACION = "fragment1.action.MI_UBICACION";
+    public static final String ACTION_MI_UBICACION = "MapFragment.action.MI_UBICACION";
 
 
     // Progress Dialog Object
@@ -172,58 +184,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         prgDialog.setCancelable(false);
 
 
-// <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
-        //  switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
-
-/*
-        // EVENTO ASOCIADO AL SWITCH
-        switchGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                                 @Override
-                                                 public void onCheckedChanged(CompoundButton cb, boolean on) {
-                                                     if (on) {
-                                                         //LA JODA DEL PEDIDO DE PERMISO
-                                                         Location myLocation = null;
-                                                         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                                                                 != PackageManager.PERMISSION_GRANTED) {
-                                                             // Check Permissions Now
-                                                             ActivityCompat.requestPermissions(getActivity(),
-                                                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                                                     REQUEST_LOCATION);
-                                                         } else {
-                                                             // permission has been granted, continue as usual
-                                                             myLocation =
-                                                                     LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                                                         }
-                                                         if (myLocation != null){
-                                                             LatLng myLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
-                                                             googleMap.addMarker(new MarkerOptions().position(myLatLng).title("Ubicacion actual"));
-                                                             googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
-
-                                                         }
-
-
-                                                         //Do something when Switch button is on/checked
-                                                         textoUbicacionOrigen.setText("Tu ubicacion actual");
-                                                     } else {
-                                                         //Do something when Switch is off/unchecked
-                                                         textoUbicacionOrigen.setText("Ubicacion del GPS... no funciona");
-                                                     }
-                                                 }
-        });
-*/
-
-// </editor-fold>
-
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
-        // filter.addAction(ACTION_INTENT2);
+         filter.addAction(ACTION_MI_UBICACION);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
 
 
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
 
         Log.d(TAG, "SE CREO EL MAPA");
 
-
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+                    PERMISSION_ACCESS_COARSE_LOCATION);
+        }
         // Perform any camera updates here
         return v;
     } // FIN onCreate()
@@ -235,36 +209,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         Log.d(TAG, "ADENTRO del eventbus: " + event.message);
 
         if (event.message.toString().equals("Mi Ubicacion")){
-
-            LatLng myActualLatLng;
-            if(mCurrentLocation!= null)
-                myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
-            else
-                myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
-            // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
-            //
-            CameraPosition position = CameraPosition.builder()
-                    .target(myActualLatLng)
-                    .zoom(16f)
-                    .bearing(0.0f)
-                    .tilt(0.0f)
-                    .build();
-
-            if (mDestinationMarker != null)
-                mDestinationMarker.remove();
-
-            //marker inicial
-            //mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
-
-            MarkerOptions options;
-
-            options = new MarkerOptions().position(myActualLatLng);
-            options.title(getAddressFromLatLng(myActualLatLng));
-            options.icon(BitmapDescriptorFactory.defaultMarker());
-            mDestinationMarker = googleMap.addMarker(options);
-
-            textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-            textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
 
 
             //Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
@@ -292,11 +236,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 mostrarDialAceptarProveedor(jsonProveedor);
             }
              if(ACTION_MI_UBICACION.equals(intent.getAction())) {
-                 Log.d(TAG, "ADENTRO DEL ACTION_MI_UBICACION: ");
+                 LatLng myActualLatLng;
+
+
+                 if(mCurrentLocation!= null)
+                     myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
+                 else
+                     myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+                 // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
+                 //
+
+                 if (mDestinationMarker != null)
+                     mDestinationMarker.remove();
+
+                 //marker inicial
+                 //mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
+
+                 MarkerOptions options;
+
+                 options = new MarkerOptions().position(myActualLatLng);
+                 options.title(getAddressFromLatLng(myActualLatLng));
+                 options.icon(BitmapDescriptorFactory.defaultMarker());
+                 mDestinationMarker = googleMap.addMarker(options);
+
+                 textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+                 textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
+
+                 // Llevar a la posicion actual
+                 CameraPosition position = CameraPosition.builder()
+                         .target(myActualLatLng)
+                         .zoom(16f)
+                         .bearing(0.0f)
+                         .tilt(0.0f)
+                         .build();
+                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
 
 
 
-            //DO
+                 //DO
              }
         }
     };
@@ -316,6 +293,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION);
+
         }
         else {
             // permission has been granted, continue as usual
@@ -328,13 +306,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             myLocatLatLng = mdeoLatLng;
         }
         else{
-            //  myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
+            myLocatLatLng = new LatLng( myLocation.getLatitude(), myLocation.getLongitude());
         }
 
 
         initListeners();
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -354,18 +331,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         googleMap.setOnMapClickListener(this);
     }
 
+
+
+
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     public void onStop() {
-        super.onStop();
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        super.onStop();
     }
 
 
@@ -376,14 +358,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
+
+
         } else {
             // permission has been granted, continue as usual
-            Location myLocation =
-                    LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
 
 
@@ -392,6 +371,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .getLastLocation(mGoogleApiClient);
 
         initCamera(mCurrentLocation);
+
+
+    /*
+        podria usarse para hallar la velociad y mandarlo?
+        http://www.androidtutorialpoint.com/intermediate/android-map-app-showing-current-location-android/
+        */
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        /*
+
+    */
+
     }
 
     //gennymotion
@@ -447,6 +446,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled( true );
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ACCESS_COARSE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // All good!
+                } else {
+                    Toast.makeText(getActivity(), "Need your location!", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -632,8 +645,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
 
-
-
         /*****************  Consulta a BD si existe el user ********************/
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/PedirServicio";
         JSONObject obj = new JSONObject();
@@ -645,7 +656,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             jsonOrigen.put("latitud", mCurrentLocation.getLatitude());
             jsonOrigen.put("estado", "Ok");
 
-            obj.put("correo", "maxi@hotmail.com");
+            obj.put("correo", "pepe@hotmail.com");
             obj.put("servicioId", 2);
             obj.put("ubicacion", jsonOrigen);
 
@@ -679,9 +690,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
-               // DESCOMENTAR XXXX
-                // mActualState = mapState.ELIGIENDO_ORIGEN;
-               // displayView(mapState.ELIGIENDO_ORIGEN);
+
+                mActualState = mapState.ELIGIENDO_ORIGEN;
+                displayView(mapState.ELIGIENDO_ORIGEN);
                 if(statusCode == 404){
                     Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
                 }else if(statusCode == 500){
@@ -720,4 +731,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-}
+
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+        mCurrentLocation = location;
+
+
+        /* lo que hace abajo es tirar un marcador por cada vez que se mueve....
+        Marker mCurrLocationMarker = null;
+
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+
+        //Place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mCurrLocationMarker = googleMap.addMarker(markerOptions);
+
+        //move map camera
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(16));
+*/
+
+          /*
+        //SE QUEDA LO DE ABAJO? O SE DEBERIA IR? XXX
+        //stop location updates ---> ESTO PARA EL LISTENER de cuando se mueve el GPS
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+
+*/
+
+    }
+
+
+
+
+}// FIN CLASS MapFragment
