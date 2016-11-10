@@ -70,19 +70,19 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
         TextView textoTelefonoProv = (TextView) v.findViewById(R.id.text_dialog_yub_disp_telefono);
         RatingBar ratingBarPuntajeProv = (RatingBar) v.findViewById(R.id.ratingBarYuberDispo);
 
-        double puntaje = 0;
+        String stringPuntaje = "";
         try {
             textoNombreProv.setText(mProveedor.getString("usuarioNombre"));
             textoAppellidoProv.setText(mProveedor.getString("usuarioApellido"));
             textoMarcaModProv.setText(mProveedor.getString("marca") + " " + mProveedor.getString("modelo"));
             textoTelefonoProv.setText(mProveedor.getString("usuarioTelefono"));
-            puntaje = mProveedor.getDouble("usuarioPromedioPuntaje");
+            stringPuntaje = mProveedor.getString("usuarioPromedioPuntaje");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        ratingBarPuntajeProv.setRating(((float) puntaje));
+        ratingBarPuntajeProv.setRating(Float.parseFloat(stringPuntaje));
 
         Button botonAceptar = (Button) v.findViewById(R.id.boton_aceptar_yuber);
         Button botonCancelar = (Button) v.findViewById(R.id.boton_cancelar_yuber);

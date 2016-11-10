@@ -42,11 +42,13 @@ public class Intro extends AppCompatActivity {
             }
         }
         String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "SESIIIIIIIIIIIION con token :" + token);
         //Guardo el token en session
         SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(TokenKey, token);
         editor.commit();
+        Log.d(TAG, "TengoSession con token :" + token);
         //Combruebo si ya tengo session.
         TengoSession(token);
 
@@ -54,21 +56,12 @@ public class Intro extends AppCompatActivity {
 
 
 
-        //BOTON OPCIONAL PARA SALTEARSE EL LOGIN
+        //BOTON OPCIONAL PARA SALTEARSE EL LOGIN // SACAR EN LA IMPLEMENTACION
         Button botonSaltearLogin = (Button) findViewById(R.id.button4);
         botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saltearLogin(v);
-                // <editor-fold defaultstate="collapsed" desc="EVENTO ASOCIADO AL SWITCH implementar en fragmento swtich?">
-                /*
-                try {
-                    invokeWS();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                */ // </editor-fold>
+
             }
         });
 

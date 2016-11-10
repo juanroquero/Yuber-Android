@@ -7,6 +7,12 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.io.StringWriter;
+import java.util.Map;
 
 
 public class MiFirebaseMessagingService extends FirebaseMessagingService {
@@ -25,15 +31,19 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Map<String, String> data = remoteMessage.getData();
+            Log.d(TAG, "Message data payload: " + data);
 
 
             String tituloNotificacion = remoteMessage.getNotification().getTitle();
 
             Log.d(TAG, "Message title: " + tituloNotificacion );
 
-            if (tituloNotificacion.equals("Tu Yuber esta en camino"))
-                sendBodyToMapFragment(remoteMessage.getNotification().getBody());
+            if (tituloNotificacion.equals("Tu Yuber esta en camino")){
+                Gson gson = new Gson();
+                String jsonData = gson.toJson(data);
+                sendBodyToMapFragment(jsonData);
+            }
 
 
 

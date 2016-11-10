@@ -41,8 +41,18 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String EmailKey = "emailKey";
     public static final String TokenKey = "tokenKey";
-    SharedPreferences sharedpreferences;
 
+
+    private String emailSession = "";
+    private String tokenSession = "";
+
+    public String getEmailSession(){
+        return emailSession;
+    }
+
+    public String getTokenSession(){
+        return tokenSession;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +70,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
-/*
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-
-            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    Manifest.MY_PERMISSION_ACCESS_COURSE_LOCATION );
 
 
-
-        }
-*/
+        SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        emailSession = sharedpreferences.getString(EmailKey, "");
+        tokenSession = sharedpreferences.getString(TokenKey, "");
 
         // display the first navigation drawer view on app launch
         displayView(1);
@@ -96,9 +101,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
 
         if (id == R.id.action_cerrar_sesion) {
-            SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
-            String email = sharedpreferences.getString(EmailKey, "");
-            CerrarSesion(email);
+            CerrarSesion();
             return true;
         }
 
@@ -158,18 +161,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         finish();
     }
 
-    public void CerrarSesion(String email){
-        SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
-        String token = sharedpreferences.getString(TokenKey, "");
+    public void CerrarSesion(){
         //
         // TODO AGREGAR ABANDONAR SERVICIO
         //
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/Logout";
         JSONObject obj = new JSONObject();
         try {
-            obj.put("correo", email);
-            obj.put("password","");
-            obj.put("deviceId",token);
+            obj.put("correo", emailSession);
+            obj.put("password", "");
+            obj.put("deviceId", tokenSession);
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }

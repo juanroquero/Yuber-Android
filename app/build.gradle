@@ -36,6 +36,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.4.0'
     compile files('libs/android-async-http-1.4.4.jar')
 
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+
     //http://greenrobot.org/eventbus/
     compile 'org.greenrobot:eventbus:3.0.0'
 
