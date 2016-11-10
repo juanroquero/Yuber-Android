@@ -163,8 +163,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     case DESTINO_ELEGIDO:
                         mostrarViajeFinalizado();
                         break;
-                    case ELIGIENDO_DESTINO:
-                        break;
                     default:
                         break;
                 }
@@ -233,23 +231,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
              if(ACTION_MI_UBICACION.equals(intent.getAction())) {
                  LatLng myActualLatLng;
-
-
                  if(mCurrentLocation!= null)
                      myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
                  else
-                     myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
-                 // LatLng myActualLatLng = new LatLng(-34.9, -56.16);//new LatLng(-34.9, -56.16);
-                 //
+                     myActualLatLng = new LatLng(-34.9, -56.16);
 
                  if (mDestinationMarker != null)
                      mDestinationMarker.remove();
 
-                 //marker inicial
-                 //mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(getAddressFromLatLng(myActualLatLng)));
-
                  MarkerOptions options;
-
                  options = new MarkerOptions().position(myActualLatLng);
                  options.title(getAddressFromLatLng(myActualLatLng));
                  options.icon(BitmapDescriptorFactory.defaultMarker());
@@ -266,10 +256,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                          .tilt(0.0f)
                          .build();
                  googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-
-
-
-                 //DO
              }
         }
     };
@@ -575,17 +561,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         //Se cancelo el Yuber pedido
                         cancelarServicioOnline();
 
+                        break;
+                    case YUBER_EN_CAMINO:
+                        //Se cancelo el Yuber pedido
+                        cancelarServicioOnline();
 
-
-                        /*
-
-                        mActualState = mapState.ELIGIENDO_ORIGEN;
-                        displayView(mActualState);
-                        if (mDestinationMarker != null)
-                            mDestinationMarker.remove();
-                        buttonLlammarUber.setText("SOLICITAR YUBER");
-
-                        */
                         break;
                     case ELIGIENDO_DESTINO:
                         //ELEGIR DESTINO /// AGREGAR CODIGO
