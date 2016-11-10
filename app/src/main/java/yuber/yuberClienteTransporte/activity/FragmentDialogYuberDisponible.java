@@ -81,8 +81,15 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
             e.printStackTrace();
         }
 
+        try {
+            ratingBarPuntajeProv.setRating(Float.parseFloat(stringPuntaje));
+        }
+        catch (Exception e){
+            ratingBarPuntajeProv.setRating(0);
+            Log.d(TAG, "Comportamiento extrano del rating: " + e );
+        }
 
-        ratingBarPuntajeProv.setRating(Float.parseFloat(stringPuntaje));
+
 
         Button botonAceptar = (Button) v.findViewById(R.id.boton_aceptar_yuber);
         Button botonCancelar = (Button) v.findViewById(R.id.boton_cancelar_yuber);
