@@ -136,8 +136,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 fragment = new MapFragment();
                 SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                int idServicio = sharedPreferences.getInt(IdServicioKey, 33333333);
-                title = "Servicio con ID:"+ mIdServicio;
+                String stringJsonServicio = sharedPreferences.getString(IdServicioKey, "ERROR - ALGO ANDA MAL");
+                String nombreServicio = "";
+                try {
+                    JSONObject jsonServicio = new JSONObject(stringJsonServicio);
+                    nombreServicio = jsonServicio.getString("mNombre");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    nombreServicio = "ERROR";
+                }
+                title = nombreServicio;
                 break;
             case 2:
                 fragment = new HistoricFragment();

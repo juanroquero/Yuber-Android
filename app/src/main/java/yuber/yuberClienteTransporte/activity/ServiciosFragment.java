@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -36,7 +37,6 @@ public class ServiciosFragment extends Fragment {
     private String Puerto = "8080";
 
 
-    private List<Movie> movieList = new ArrayList<>();
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String IdServicioKey = "IdServicioKey";
     public static final String EmailKey = "emailKey";
@@ -111,13 +111,7 @@ public class ServiciosFragment extends Fragment {
         rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(getActivity().getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Movie movie = movieList.get(position);
-                // Seteo en el SharedPreferences el ID del servicio generado y voy a mapa
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt(IdServicioKey, position);
-                Toast.makeText(getActivity().getApplicationContext(), "Ha seleccionado viajar en " + " servicio con ID:"+ position , Toast.LENGTH_SHORT).show();
-                cambiarAMain(position);
+              cambiarAMain(position);
 
                 // set the toolbar textNombreServicio
             }
@@ -135,8 +129,20 @@ public class ServiciosFragment extends Fragment {
 
 
     public void cambiarAMain(int id){
+        Servicios servicios = servicioList.get(id);
+        Gson gson = new Gson();
+        String jsonServicio = gson.toJson(servicios);
+        // Seteo en el SharedPreferences el ID del servicio generado y voy a mapa
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(IdServicioKey, jsonServicio);
+        editor.commit();
+        Toast.makeText(getActivity().getApplicationContext(), "Ha seleccionado viajar en " + servicios.getNombre() , Toast.LENGTH_SHORT).show();
+
+
+
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setmIdServicio(id);
+        mainActivity.setmIdServicio(servicios.getID());
         mainActivity.displayView(1);
         //Intent goToMainIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
        // goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

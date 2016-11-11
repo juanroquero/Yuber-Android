@@ -68,6 +68,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
 
+    //Banderas del broadcaster
+    public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
+    public static final String ACTION_MI_UBICACION = "MapFragment.action.MI_UBICACION";
+    public static final String ACTION_EMPIEZA_VIAJE = "MapFragment.action.EMPIEZA_VIAJE";
     public static final String TAG = "MAPA";
 
     private String Ip = "54.213.51.6";
@@ -87,7 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     //
     LocationRequest mLocationRequest;
-    private int mIdServicioInstancia;
+    private int mIdInstanciaServicio;
 
 
     //Elementos del UI
@@ -103,10 +107,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private Fragment actualFragment = null;
 
 
-    //Banderas del broadcaster
-    public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
-    public static final String ACTION_MI_UBICACION = "MapFragment.action.MI_UBICACION";
-    public static final String ACTION_EMPIEZA_VIAJE = "MapFragment.action.EMPIEZA_VIAJE";
 
 
     // Progress Dialog Object
@@ -644,7 +644,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         // JSON Object
                         JSONObject obj = new JSONObject(response);
                         int idString = obj.getInt("id");
-                        guardarIdServicioInstancia(idString);
+                        guardarIdInstanciaServicio(idString);
                         mButtonLlammarUber.setText("CANCELAR");
                         Toast.makeText(getActivity().getApplicationContext(), "se pidio el servicio PAPAA", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
@@ -728,11 +728,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     private void cancelarServicioOnline(){
 
-        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/CancelarPedido/" + mIdServicioInstancia;
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/CancelarPedido/" + mIdInstanciaServicio;
         JSONObject obj = new JSONObject();
-
         AsyncHttpClient client = new AsyncHttpClient();
-
         RequestHandle Rq = client.get(null, url, new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
@@ -764,13 +762,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             mDestinationMarker.remove();
             mDestinationMarker = null;
         }
-
     }
 
 
-    private void guardarIdServicioInstancia(int id) {
-        mIdServicioInstancia = id;
-
+    private void guardarIdInstanciaServicio(int id) {
+        mIdInstanciaServicio = id;
     }
 
 
