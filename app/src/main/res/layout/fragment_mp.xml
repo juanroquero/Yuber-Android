@@ -39,7 +39,8 @@
         android:layout_height="wrap_content"
         android:text="OK"
         android:id="@+id/button3"
-        android:layout_gravity="left|bottom"/>
+        android:layout_gravity="left|bottom"
+        android:visibility="visible"/>
     <!-- Last loaded time layout -->
 
 </FrameLayout>

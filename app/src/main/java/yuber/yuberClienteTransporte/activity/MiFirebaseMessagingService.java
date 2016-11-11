@@ -41,7 +41,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
                 String jsonData = gson.toJson(data);
                 sendProviderInfoToMapFragment(jsonData);
             }
-            else if (tituloNotificacion.equals("Tu Yuber esta en la puerta")){
+            else if (tituloNotificacion.equals("Empieza el viaje")){
                 mandarEmpiezaViajeMapFragment();
             }
 

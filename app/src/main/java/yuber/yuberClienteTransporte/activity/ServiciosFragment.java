@@ -15,6 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +32,24 @@ import yuber.yuberClienteTransporte.adapter.ServiciosAdapter;
 
 public class ServiciosFragment extends Fragment {
 
+    private String Ip = "54.213.51.6";
+    private String Puerto = "8080";
+
+
     private List<Movie> movieList = new ArrayList<>();
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String IdServicioKey = "IdServicioKey";
+    public static final String EmailKey = "emailKey";
+    public static final String ServiciosKey = "ServiciosKey";
+    SharedPreferences sharedpreferences;
+
+    private List<Servicios> servicioList = new ArrayList<>();
+
+    private JSONObject rec;
+    private JSONObject datos;
+    private JSONObject datos2;
+    private JSONObject datos3;
+
 
     public ServiciosFragment() {
         // Required empty public constructor
@@ -51,7 +73,7 @@ public class ServiciosFragment extends Fragment {
         //LO NUEVO QUE HICE 30-OCT
 
         prepareMovieData();
-        ServiciosAdapter adapter = new ServiciosAdapter(movieList);
+        ServiciosAdapter adapter = new ServiciosAdapter(servicioList);
 
 
 
@@ -123,6 +145,60 @@ public class ServiciosFragment extends Fragment {
 
 
     private void prepareMovieData() {
+
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerServicios/Transporte" ;
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(null, url, new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(ServiciosKey, response);
+                editor.commit();
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                if(statusCode == 404){
+                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String Response = sharedpreferences.getString(ServiciosKey, "");
+        agregarItems(Response);
+    }
+
+    private void agregarItems(String response){
+        Servicios servicio;
+        try {
+            JSONArray arr_strJson = new JSONArray(response);
+            for (int i = 0; i < arr_strJson.length(); ++i) {
+                //rec todos los datos de una instancia servicio
+                JSONObject jsonServicio = arr_strJson.getJSONObject(i);
+                int id = jsonServicio.getInt("servicioId");
+                int tarifaBase = jsonServicio.getInt("servicioTarifaBase");
+                int precioKM = jsonServicio.getInt("servicioPrecioKM");
+                String nombre = jsonServicio.getString("servicioNombre");
+
+                //Agrego a la lista
+                servicio = new Servicios(id, tarifaBase, precioKM, nombre);
+                servicioList.add(servicio);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+/*
+
+    private void prepareMovieData() {
         Movie movie = new Movie("Auto", "5 km", "$250");
         movieList.add(movie);
 
@@ -163,56 +239,9 @@ public class ServiciosFragment extends Fragment {
         movie = new Movie("01/01/2015", "12 km", "$600");
         movieList.add(movie);
 
-
-/*
-        movie = new Movie("Inside Out", "Animation, Kids & Family", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Star Wars: Episode VII - The Force Awakens", "Action", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Shaun the Sheep", "Animation", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("The Martian", "Science Fiction & Fantasy", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Mission: Impossible Rogue Nation", "Action", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Up", "Animation", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("Star Trek", "Science Fiction", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("The LEGO Movie", "Animation", "2014");
-        movieList.add(movie);
-
-        movie = new Movie("Iron Man", "Action & Adventure", "2008");
-        movieList.add(movie);
-
-        movie = new Movie("Aliens", "Science Fiction", "1986");
-        movieList.add(movie);
-
-        movie = new Movie("Chicken Run", "Animation", "2000");
-        movieList.add(movie);
-
-        movie = new Movie("Back to the Future", "Science Fiction", "1985");
-        movieList.add(movie);
-
-        movie = new Movie("Raiders of the Lost Ark", "Action & Adventure", "1981");
-        movieList.add(movie);
-
-        movie = new Movie("Goldfinger", "Action & Adventure", "1965");
-        movieList.add(movie);
-
-        movie = new Movie("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014");
-        movieList.add(movie);
-*/
         //mAdapter.notifyDataSetChanged();
     }
-
+*/
 
 
 }

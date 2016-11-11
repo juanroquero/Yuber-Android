@@ -1,8 +1,5 @@
 package yuber.yuberClienteTransporte.adapter;
 
-/**
- * Created by Agustin on 28-Oct-16.
- */
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +10,11 @@ import java.util.List;
 
 import yuber.yuberClienteTransporte.R;
 import yuber.yuberClienteTransporte.activity.Movie;
+import yuber.yuberClienteTransporte.activity.Servicios;
 
 public class ServiciosAdapter extends RecyclerView.Adapter<ServiciosAdapter.MyViewHolder> {
 
-    private List<Movie> moviesList;
+    private List<Servicios> mServiciosList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView textNombreServicio;
@@ -32,9 +30,9 @@ public class ServiciosAdapter extends RecyclerView.Adapter<ServiciosAdapter.MyVi
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ServiciosAdapter(List<Movie> myDataset) {
+    public ServiciosAdapter(List<Servicios> myDataset) {
 
-        moviesList = myDataset;
+        mServiciosList = myDataset;
     }
 
     // Create new views (invoked by the layout manager)
@@ -52,14 +50,14 @@ public class ServiciosAdapter extends RecyclerView.Adapter<ServiciosAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Movie movie = moviesList.get(position);
-        holder.textNombreServicio.setText(movie.getTitle());
+        Servicios servicio = mServiciosList.get(position);
+        holder.textNombreServicio.setText(servicio.getNombre());
         //holder.genre.setText(movie.getGenre());
        // holder.year.setText(movie.getYear());
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return mServiciosList.size();
     }
 }

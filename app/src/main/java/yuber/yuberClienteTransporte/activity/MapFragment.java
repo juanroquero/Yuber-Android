@@ -49,8 +49,6 @@ import com.loopj.android.http.RequestHandle;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,6 +82,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
+    private Marker mOrigenMarker;
     private Marker mDestinationMarker;
 
     //
@@ -148,8 +147,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 switch (mActualState) {
                     case ELIGIENDO_ORIGEN:
                         //mostrarViajeFinalizado();
-                        String test1 = "{\"usuarioPromedioPuntaje\":2.5,\"usuarioCorreo\":\"maxi@gmail.com\", \"usuarioTelefono\":\"098839498\",\"usuarioNombre\":\"ElMasi\",\"usuarioApellido\":\"Barnech\", \"marca\":\"BMW\", \"modelo\":\"320\",\"estado\":\"Ok\"}";
-                        mostrarDialAceptarProveedor(test1);
+                        LatLng latLng = mOrigenMarker.getPosition();;
+                        mOrigenMarker.remove();
+                        MarkerOptions options;
+                        options = new MarkerOptions().position(latLng);
+                        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_52));
+                        mOrigenMarker = googleMap.addMarker(options);
+                        mOrigenMarker.setTitle("Origen");
+
                         break;
                     case BUSCANDO_YUBER:
                         String test = "{\"usuarioPromedioPuntaje\":2.5,\"usuarioCorreo\":\"maxi@gmail.com\", \"usuarioTelefono\":\"098839498\",\"usuarioNombre\":\"ElMasi\",\"usuarioApellido\":\"Barnech\", \"marca\":\"BMW\", \"modelo\":\"320\",\"estado\":\"Ok\"}";
@@ -176,6 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         filter.addAction(ACTION_MI_UBICACION);
+        filter.addAction(ACTION_EMPIEZA_VIAJE);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
 
         Log.d(TAG, "SE CREO EL MAPA");
@@ -189,28 +195,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         return v;
     } // FIN onCreate()
 
-    // TO DELETE OR REUSE XXXX
-    // This method will be called when a MessageEvent is posted (in the UI thread for Toast)
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        Log.d(TAG, "ADENTRO del eventbus: " + event.message);
-
-        if (event.message.toString().equals("Mi Ubicacion")){
-
-
-            //Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
-
-
-        }
-
-    }
-    /*
-    // This method will be called when a SomeOtherEvent is posted
-    @Subscribe
-    public void handleSomethingElse(SomeOtherEvent event) {
-        doSomethingWith(event);
-    }
-    */
 
     protected BroadcastReceiver ActivityDataReceiver = new BroadcastReceiver() {
         @Override
@@ -239,14 +223,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         else
             myActualLatLng = new LatLng(-34.9, -56.16);
 
-        if (mDestinationMarker != null)
-            mDestinationMarker.remove();
+        if (mOrigenMarker != null)
+            mOrigenMarker.remove();
 
         MarkerOptions options;
         options = new MarkerOptions().position(myActualLatLng);
         options.title(getAddressFromLatLng(myActualLatLng));
         options.icon(BitmapDescriptorFactory.defaultMarker());
-        mDestinationMarker = googleMap.addMarker(options);
+        mOrigenMarker = googleMap.addMarker(options);
 
         textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
         textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
@@ -397,7 +381,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         direccion = getAddressFromLatLng(myActualLatLng);
 
         try {
-            mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(direccion));
+            mOrigenMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(direccion));
         }catch (Exception e){
             Log.d(TAG, "El marcador no se puso por el siguiente motivo: " + e);
         }
@@ -462,32 +446,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onMapClick(LatLng latLng) {
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
-                cambiarTextoFragmentoChico(0, latLng);
+                textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+                MarkerOptions options;
+                if (mOrigenMarker != null)
+                    mOrigenMarker.remove();
+                options = new MarkerOptions().position(latLng);
+                options.title(getAddressFromLatLng(latLng));
+                options.icon(BitmapDescriptorFactory.defaultMarker());
+                mOrigenMarker = googleMap.addMarker(options);
+                textoUbicacion.setText(getAddressFromLatLng(latLng));
                 break;
             case ELIGIENDO_DESTINO:
-                cambiarTextoFragmentoChico(1, latLng);
+                cambiarTextoDestinoFragmentoChico(latLng);
                 break;
             case YUBER_EN_CAMINO:
-                cambiarTextoFragmentoChico(1, latLng);
+                cambiarTextoDestinoFragmentoChico (latLng);
                 break;
             default:
                 break;
         }
     }
 
-    private void cambiarTextoFragmentoChico(int tipo, LatLng latLng){
-        switch (tipo) {
-            case 0:
-                //si es 0 se desea setear el origen
-                textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-                break;
-            case 1:
-                //si es 1 se desea setear el destino
-                textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionDestino);
-                break;
-            default:
-                break;
-        }
+    private void cambiarTextoDestinoFragmentoChico( LatLng latLng){
+        textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionDestino);
         MarkerOptions options;
         if (mDestinationMarker != null)
             mDestinationMarker.remove();
@@ -521,19 +502,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mActualState = estado;
         switch (estado) {
             case ELIGIENDO_ORIGEN:
+                mButtonLlammarUber.setEnabled(true);
                 mButtonLlammarUber.setText("SOLICITAR");
                 actualFragment = new MapCallYuberFragment();
+                if (mOrigenMarker != null)
+                    mOrigenMarker.remove();
                 break;
             case BUSCANDO_YUBER:
+                // Se modifica el icono del Marker
+                LatLng latLng = mOrigenMarker.getPosition();;
+                if (mOrigenMarker != null)
+                    mOrigenMarker.remove();
+                MarkerOptions options;
+                options = new MarkerOptions().position(latLng);
+                options.title(getAddressFromLatLng(latLng));
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_52));
+                mOrigenMarker = googleMap.addMarker(options);
+                mOrigenMarker.setTitle("Origen");
+
                 actualFragment = new MapWaitYFragment();
                 break;
             case YUBER_EN_CAMINO:
                 actualFragment = new MapYubConfirmadoFragment();
                 break;
             case ELIGIENDO_DESTINO:
-                actualFragment = new MapYubConfirmadoFragment();
-                if (mDestinationMarker != null)
-                    mDestinationMarker.remove();
+                if (mOrigenMarker != null)
+                    mOrigenMarker.remove();
+                mOrigenMarker = null;
                 mDestinationMarker = null;
                 break;
             case DESTINO_ELEGIDO:
@@ -563,6 +558,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         pedirServicio();
                         break;
                     case BUSCANDO_YUBER:
+
                         //Se cancelo el Yuber pedido
                         cancelarServicioOnline();
 
@@ -575,11 +571,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     case ELIGIENDO_DESTINO:
                         //ELEGIR DESTINO /// AGREGAR CODIGO
                         if (mDestinationMarker != null) { //.isVisible())
-                            displayView(mapState.DESTINO_ELEGIDO);
+                            mandarDestinoAlServidor();
                         } else
                             Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
-
-
                         break;
                     default:
                         break;
@@ -620,8 +614,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         try {
 
             JSONObject jsonOrigen = new JSONObject();
-            jsonOrigen.put("longitud", mDestinationMarker.getPosition().longitude);
-            jsonOrigen.put("latitud", mDestinationMarker.getPosition().latitude);
+            jsonOrigen.put("longitud", mOrigenMarker.getPosition().longitude);
+            jsonOrigen.put("latitud", mOrigenMarker.getPosition().latitude);
             jsonOrigen.put("estado", "Ok");
 
             MainActivity mainActivity = (MainActivity) getActivity();
@@ -674,11 +668,63 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 }
             }
         });
-
         mButtonLlammarUber.setEnabled(true);
 
     }
 
+
+    private void mandarDestinoAlServidor(){
+        mButtonLlammarUber.setEnabled(false);
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/PedirServicio";
+        JSONObject obj = new JSONObject();
+        try {
+
+            JSONObject jsonOrigen = new JSONObject();
+            jsonOrigen.put("longitud", mDestinationMarker.getPosition().longitude);
+            jsonOrigen.put("latitud", mDestinationMarker.getPosition().latitude);
+            jsonOrigen.put("estado", "Ok");
+
+            MainActivity mainActivity = (MainActivity) getActivity();
+
+            obj.put("correo", mainActivity.getEmailSession());
+            obj.put("servicioId", 2);
+            obj.put("ubicacion", jsonOrigen);
+
+
+        } catch (JSONException e) {
+            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        AsyncHttpClient client = new AsyncHttpClient();
+        ByteArrayEntity entity = null;
+        try {
+            entity = new ByteArrayEntity(obj.toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        RequestHandle Rq = client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                displayView(mapState.DESTINO_ELEGIDO);
+                //TODO CUANDO SE ACEPTA EL DESTINO.... ESPERAR? no desbloquer el boton mandar destino
+                Toast.makeText(getActivity().getApplicationContext(), "Se mando el destino con exito", Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                mButtonLlammarUber.setEnabled(true);
+                //TODO MEJORAR EL MENSAJE QUE SE REPONDE----
+                if(statusCode == 404){
+                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
 
     private void cancelarServicioOnline(){
 
@@ -710,8 +756,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     private void cancelarServicio() {
         displayView(mapState.ELIGIENDO_ORIGEN);
-        if (mDestinationMarker != null)
+        if (mOrigenMarker != null){
+            mOrigenMarker.remove();
+            mOrigenMarker = null;
+        }
+        if (mDestinationMarker != null){
             mDestinationMarker.remove();
+            mDestinationMarker = null;
+        }
+
     }
 
 
