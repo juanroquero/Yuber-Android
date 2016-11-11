@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String EmailKey = "emailKey";
     public static final String TokenKey = "tokenKey";
+    public static final String IdServicioKey = "IdServicioKey";
+    public static final String TAG = "MAIN ACTIVITY";
+
+    private int mIdServicio = 0;
 
 
     private String emailSession = "";
@@ -48,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     public String getEmailSession(){
         return emailSession;
+    }
+
+    public void setmIdServicio(int id){
+        mIdServicio = id;
     }
 
     public String getTokenSession(){
@@ -75,9 +84,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
         emailSession = sharedpreferences.getString(EmailKey, "");
         tokenSession = sharedpreferences.getString(TokenKey, "");
+        Log.d(TAG, "El token es: " + tokenSession);
 
         // display the first navigation drawer view on app launch
-        displayView(1);
+        displayView(0);
     }
 
     @Override
@@ -114,17 +124,20 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         displayView(position);
     }
 
-    private void displayView(int position) {
+    public void displayView(int position) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
-                title = getString(R.string.title_home);
+                fragment = new ServiciosFragment();
+                title = getString(R.string.title_servicios);
                 break;
             case 1:
                 fragment = new MapFragment();
-                title = getString(R.string.title_map);
+                SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int idServicio = sharedPreferences.getInt(IdServicioKey, 33333333);
+                title = "Servicio con ID:"+ mIdServicio;
                 break;
             case 2:
                 fragment = new HistoricFragment();
@@ -143,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             fragmentTransaction.replace(R.id.container_body, fragment);
             fragmentTransaction.commit();
 
-            // set the toolbar title
+            // set the toolbar textNombreServicio
             getSupportActionBar().setTitle(title);
         }
     }

@@ -1,27 +1,35 @@
 package yuber.yuberClienteTransporte.activity;
 
-/**
- * Created by Agustin on 28-Oct-16.
- */
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;;import java.util.ArrayList;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import yuber.yuberClienteTransporte.R;
-import yuber.yuberClienteTransporte.adapter.HistorialAdapter;
+import yuber.yuberClienteTransporte.adapter.ServiciosAdapter;
 
-public class HistoricFragment extends Fragment {
+;
+
+public class ServiciosFragment extends Fragment {
 
     private List<Movie> movieList = new ArrayList<>();
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String IdServicioKey = "IdServicioKey";
 
-
-    public HistoricFragment() {
+    public ServiciosFragment() {
         // Required empty public constructor
     }
 
@@ -35,20 +43,19 @@ public class HistoricFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_historic, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_servicios, container, false);
 
-        RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view_historic);
+        RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view);
         rv.setHasFixedSize(true);
 
         //LO NUEVO QUE HICE 30-OCT
 
         prepareMovieData();
-        HistorialAdapter adapter = new HistorialAdapter(movieList);
+        ServiciosAdapter adapter = new ServiciosAdapter(movieList);
 
 
 
         // termina lo nuevo
-
 
 
 
@@ -58,8 +65,11 @@ public class HistoricFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
+        //AGREGA LA RAYITA AL MEDIO
+        rv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        rv.setItemAnimator(new DefaultItemAnimator());
 
-/*
+/*      QUE ONDA CON ESTO? NO ES MAS NECESARIO?
         rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(rootView.getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -80,7 +90,14 @@ public class HistoricFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 Movie movie = movieList.get(position);
-                Toast.makeText(getActivity().getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+                // Seteo en el SharedPreferences el ID del servicio generado y voy a mapa
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(IdServicioKey, position);
+                Toast.makeText(getActivity().getApplicationContext(), "Ha seleccionado viajar en " + " servicio con ID:"+ position , Toast.LENGTH_SHORT).show();
+                cambiarAMain(position);
+
+                // set the toolbar textNombreServicio
             }
 
             @Override
@@ -95,38 +112,46 @@ public class HistoricFragment extends Fragment {
     }
 
 
+    public void cambiarAMain(int id){
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setmIdServicio(id);
+        mainActivity.displayView(1);
+        //Intent goToMainIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+       // goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //startActivity(goToMainIntent);
+    }
 
 
     private void prepareMovieData() {
-        Movie movie = new Movie("23/10/2016", "5 km", "$250");
+        Movie movie = new Movie("Auto", "5 km", "$250");
         movieList.add(movie);
 
 
-        movie = new Movie("20/010/2016", "4 km", "$200");
+        movie = new Movie("Moto", "4 km", "$200");
         movieList.add(movie);
 
-        movie = new Movie("19/09/2016", "2,5 km", "$125");
+        movie = new Movie("Limusina", "2,5 km", "$125");
         movieList.add(movie);
 
-        movie = new Movie("19/09/2016", "3,5 km", "$175");
+        movie = new Movie("Helicoptero", "3,5 km", "$175");
         movieList.add(movie);
 
-        movie = new Movie("29/07/2016", "1 km", "$50");
+        movie = new Movie("Tren", "1 km", "$50");
         movieList.add(movie);
 
-        movie = new Movie("19/05/2016", "10 km", "$500");
+        movie = new Movie("Bicicleta", "10 km", "$500");
         movieList.add(movie);
 
-        movie = new Movie("02/05/2016", "12 km", "$600");
+        movie = new Movie("Bote", "1 km", "$50");
         movieList.add(movie);
 
-        movie = new Movie("29/03/2016", "3 km", "$150");
+        movie = new Movie("Monopatin", "12 km", "$600");
         movieList.add(movie);
 
-        movie = new Movie("19/02/2016", "5 km", "$250");
+        movie = new Movie("Taxi", "3 km", "$150");
         movieList.add(movie);
 
-        movie = new Movie("19/01/2016", "1 km", "$50");
+        movie = new Movie("MotoTaxi", "5 km", "$250");
         movieList.add(movie);
 
         movie = new Movie("10/01/2016", "2,2km", "$110");

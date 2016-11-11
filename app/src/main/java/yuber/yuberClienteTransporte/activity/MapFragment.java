@@ -94,8 +94,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     //Elementos del UI
     private Switch switchGPS;
     private TextView textoUbicacionOrigen;
-    private TextView textoUbicacionDestino;
-    private Button buttonLlammarUber;
+    private TextView textoUbicacion;
+    private Button mButtonLlammarUber;
 
     private enum mapState {ELIGIENDO_ORIGEN, BUSCANDO_YUBER, YUBER_EN_CAMINO, ELIGIENDO_DESTINO, DESTINO_ELEGIDO}
 
@@ -107,6 +107,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     //Banderas del broadcaster
     public static final String ACTION_INTENT = "MapFragment.action.BOX_UPDATE";
     public static final String ACTION_MI_UBICACION = "MapFragment.action.MI_UBICACION";
+    public static final String ACTION_EMPIEZA_VIAJE = "MapFragment.action.EMPIEZA_VIAJE";
 
 
     // Progress Dialog Object
@@ -131,21 +132,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             e.printStackTrace();
         }
 
-
-        //SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
-        //       .findFragmentById(R.id.mapView);
         mMapView.getMapAsync(this);
-
-
-        buttonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
-        mActualState = mapState.ELIGIENDO_ORIGEN;
-        displayView(mActualState);
-
+        mButtonLlammarUber = (Button) v.findViewById(R.id.callYuberButton);
         //seteando listener en boton
-        buttonLlammarUber.setOnClickListener(createListenerBottomButton());
+        mButtonLlammarUber.setOnClickListener(createListenerBottomButton());
+
+        displayView(mapState.ELIGIENDO_ORIGEN);
 
 
-        //seteando listener en boton
+
+        //seteando listener en boton OK ----> to be deeleted
         Button botonOK = (Button) v.findViewById(R.id.button3);
         botonOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -179,11 +175,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
-         filter.addAction(ACTION_MI_UBICACION);
+        filter.addAction(ACTION_MI_UBICACION);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
-
-
-        //EventBus.getDefault().register(this);
 
         Log.d(TAG, "SE CREO EL MAPA");
 
@@ -225,41 +218,48 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             if(ACTION_INTENT.equals(intent.getAction()) && (mActualState == mapState.BUSCANDO_YUBER) ){
                 //Si llega una notificacion "Proveedor acepto viaje" y se esta buscando Yuber
                 String jsonProveedor = intent.getStringExtra("DATOS_PROVEEDOR");
-                mActualState = mapState.YUBER_EN_CAMINO;
-                displayView(mActualState);
+                displayView(mapState.YUBER_EN_CAMINO);
                 mostrarDialAceptarProveedor(jsonProveedor);
             }
-             if(ACTION_MI_UBICACION.equals(intent.getAction())) {
-                 LatLng myActualLatLng;
-                 if(mCurrentLocation!= null)
-                     myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
-                 else
-                     myActualLatLng = new LatLng(-34.9, -56.16);
-
-                 if (mDestinationMarker != null)
-                     mDestinationMarker.remove();
-
-                 MarkerOptions options;
-                 options = new MarkerOptions().position(myActualLatLng);
-                 options.title(getAddressFromLatLng(myActualLatLng));
-                 options.icon(BitmapDescriptorFactory.defaultMarker());
-                 mDestinationMarker = googleMap.addMarker(options);
-
-                 textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-                 textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
-
-                 // Llevar a la posicion actual
-                 CameraPosition position = CameraPosition.builder()
-                         .target(myActualLatLng)
-                         .zoom(16f)
-                         .bearing(0.0f)
-                         .tilt(0.0f)
-                         .build();
-                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+             else if(ACTION_MI_UBICACION.equals(intent.getAction())) {
+                mostrarMiUbicacion();
              }
+             else if(ACTION_EMPIEZA_VIAJE.equals(intent.getAction())) {
+                //TODO manage events
+                //displayView(mapState.ELIGIENDO_DESTINO);
+            }
         }
     };
 
+    private void mostrarMiUbicacion(){
+        // IMPLEMENTAR LO DE ARRIBA EMPIEZA_VIAJE
+        LatLng myActualLatLng;
+        if(mCurrentLocation!= null)
+            myActualLatLng = new LatLng( mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude() );//new LatLng(-34.9, -56.16);
+        else
+            myActualLatLng = new LatLng(-34.9, -56.16);
+
+        if (mDestinationMarker != null)
+            mDestinationMarker.remove();
+
+        MarkerOptions options;
+        options = new MarkerOptions().position(myActualLatLng);
+        options.title(getAddressFromLatLng(myActualLatLng));
+        options.icon(BitmapDescriptorFactory.defaultMarker());
+        mDestinationMarker = googleMap.addMarker(options);
+
+        textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+        textoUbicacionOrigen.setText(getAddressFromLatLng(myActualLatLng));
+
+        // Llevar a la posicion actual
+        CameraPosition position = CameraPosition.builder()
+                .target(myActualLatLng)
+                .zoom(16f)
+                .bearing(0.0f)
+                .tilt(0.0f)
+                .build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMapParam) {
@@ -346,8 +346,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
 */
-        initCamera(mCurrentLocation);
-
 
     /*
         podria usarse para hallar la velociad y mandarlo?
@@ -366,7 +364,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         /*
 
     */
-
+        initCamera(mCurrentLocation);
     }
 
     //gennymotion
@@ -397,16 +395,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         //marker inicial
         String direccion = "Origen";
         direccion = getAddressFromLatLng(myActualLatLng);
-        mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(direccion));
+
+        try {
+            mDestinationMarker = googleMap.addMarker(new MarkerOptions().position(myActualLatLng).title(direccion));
+        }catch (Exception e){
+            Log.d(TAG, "El marcador no se puso por el siguiente motivo: " + e);
+        }
 
         textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
         textoUbicacionOrigen.setText(direccion);
 
-
-
-
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-
 
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -461,36 +460,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onMapClick(LatLng latLng) {
-        MarkerOptions options;
-
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
-                switchGPS = (Switch) actualFragment.getView().findViewById(R.id.switchLocalization);
-                textoUbicacionOrigen = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
-                switchGPS.setChecked(false);
-                if (mDestinationMarker != null)
-                    mDestinationMarker.remove();
-                options = new MarkerOptions().position(latLng);
-                options.title(getAddressFromLatLng(latLng));
-                options.icon(BitmapDescriptorFactory.defaultMarker());
-                mDestinationMarker = googleMap.addMarker(options);
-                textoUbicacionOrigen.setText(getAddressFromLatLng(latLng));
+                cambiarTextoFragmentoChico(0, latLng);
                 break;
             case ELIGIENDO_DESTINO:
-                //ELEGIR DESTINO /// AGREGAR CODIGO
-                textoUbicacionDestino = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionDestino);
-                if (mDestinationMarker != null)
-                    mDestinationMarker.remove();
-                options = new MarkerOptions().position(latLng);
-                options.title(getAddressFromLatLng(latLng));
-                options.icon(BitmapDescriptorFactory.defaultMarker());
-                mDestinationMarker = googleMap.addMarker(options);
-                textoUbicacionDestino.setText(getAddressFromLatLng(latLng));
-
+                cambiarTextoFragmentoChico(1, latLng);
+                break;
+            case YUBER_EN_CAMINO:
+                cambiarTextoFragmentoChico(1, latLng);
                 break;
             default:
                 break;
         }
+    }
+
+    private void cambiarTextoFragmentoChico(int tipo, LatLng latLng){
+        switch (tipo) {
+            case 0:
+                //si es 0 se desea setear el origen
+                textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
+                break;
+            case 1:
+                //si es 1 se desea setear el destino
+                textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionDestino);
+                break;
+            default:
+                break;
+        }
+        MarkerOptions options;
+        if (mDestinationMarker != null)
+            mDestinationMarker.remove();
+        options = new MarkerOptions().position(latLng);
+        options.title(getAddressFromLatLng(latLng));
+        options.icon(BitmapDescriptorFactory.defaultMarker());
+        mDestinationMarker = googleMap.addMarker(options);
+        textoUbicacion.setText(getAddressFromLatLng(latLng));
     }
 
 
@@ -513,8 +518,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
     private void displayView(mapState estado) {
+        mActualState = estado;
         switch (estado) {
             case ELIGIENDO_ORIGEN:
+                mButtonLlammarUber.setText("SOLICITAR");
                 actualFragment = new MapCallYuberFragment();
                 break;
             case BUSCANDO_YUBER:
@@ -524,13 +531,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 actualFragment = new MapYubConfirmadoFragment();
                 break;
             case ELIGIENDO_DESTINO:
-                //ELEGIR DESTINO /// AGREGAR CODIGO
-                //mActualState = state.ELIGIENDO_ORIGEN;
                 actualFragment = new MapYubConfirmadoFragment();
                 if (mDestinationMarker != null)
                     mDestinationMarker.remove();
                 mDestinationMarker = null;
-
+                break;
+            case DESTINO_ELEGIDO:
+                mButtonLlammarUber.setEnabled(false);
                 break;
             default:
                 break;
@@ -551,9 +558,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 switch (mActualState) {
                     case ELIGIENDO_ORIGEN:
                         //Se pidio un Yuber
-                        mActualState = mapState.BUSCANDO_YUBER;
-                        displayView(mActualState);
-                        buttonLlammarUber.setText("CANCELAR YUBER");
+                        displayView(mapState.BUSCANDO_YUBER);
                         //BUSCAR LA UBICACION, MANDARLA EN PEDIR SERVICIO Y BLOQUEAR EL EL ORIGEN...
                         pedirServicio();
                         break;
@@ -570,9 +575,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     case ELIGIENDO_DESTINO:
                         //ELEGIR DESTINO /// AGREGAR CODIGO
                         if (mDestinationMarker != null) { //.isVisible())
-
-                            mActualState = mapState.DESTINO_ELEGIDO;
-                            buttonLlammarUber.setEnabled(false);
+                            displayView(mapState.DESTINO_ELEGIDO);
                         } else
                             Toast.makeText(getActivity().getApplicationContext(), "Por favor, elija un destino", Toast.LENGTH_LONG).show();
 
@@ -611,7 +614,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
 
     private void pedirServicio(){
-
+        mButtonLlammarUber.setEnabled(false);
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/PedirServicio";
         JSONObject obj = new JSONObject();
         try {
@@ -648,6 +651,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         JSONObject obj = new JSONObject(response);
                         int idString = obj.getInt("id");
                         guardarIdServicioInstancia(idString);
+                        mButtonLlammarUber.setText("CANCELAR");
                         Toast.makeText(getActivity().getApplicationContext(), "se pidio el servicio PAPAA", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         Toast.makeText(getActivity().getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
@@ -671,7 +675,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         });
 
-
+        mButtonLlammarUber.setEnabled(true);
 
     }
 
@@ -705,11 +709,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     private void cancelarServicio() {
-        mActualState = mapState.ELIGIENDO_ORIGEN;
         displayView(mapState.ELIGIENDO_ORIGEN);
         if (mDestinationMarker != null)
             mDestinationMarker.remove();
-        buttonLlammarUber.setText("SOLICITAR YUBER");
     }
 
 
@@ -761,7 +763,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Current Position");
+        markerOptions.textNombreServicio("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = googleMap.addMarker(markerOptions);
 

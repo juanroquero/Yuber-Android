@@ -22,11 +22,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
-        <activity android:name="yuber.yuberClienteTransporte.activity.Intro">
-<!--
+        <!--
+                <activity android:name="yuber.yuberClienteTransporte.activityo">
+        <-
 
-            <activity android:name="yuber.yuberClienteTransporte.activity.MainActivity">
-             -->
+                     -->
+        <activity android:name="yuber.yuberClienteTransporte.activity.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -62,11 +63,11 @@
         <activity android:name=".activity.LoginActivity" />
 
         <!--
-                <activity android:name="yuber.yuberClienteTransporte.activity."/>
-          -->
+                <activity android:name="yuber.yuberClienteTransporte.activity.Intro"/>
 
 
-                <activity android:name="yuber.yuberClienteTransporte.activity.MainActivity"/>
+        -->
+        <activity android:name="yuber.yuberClienteTransporte.activity.MainActivity"/>
 
 
 

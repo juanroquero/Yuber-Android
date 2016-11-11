@@ -9,9 +9,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
-import java.io.StringWriter;
 import java.util.Map;
 
 
@@ -37,12 +34,15 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
             String tituloNotificacion = remoteMessage.getNotification().getTitle();
 
-            Log.d(TAG, "Message title: " + tituloNotificacion );
+            Log.d(TAG, "Message textNombreServicio: " + tituloNotificacion );
 
             if (tituloNotificacion.equals("Tu Yuber esta en camino")){
                 Gson gson = new Gson();
                 String jsonData = gson.toJson(data);
-                sendBodyToMapFragment(jsonData);
+                sendProviderInfoToMapFragment(jsonData);
+            }
+            else if (tituloNotificacion.equals("Tu Yuber esta en la puerta")){
+                mandarEmpiezaViajeMapFragment();
             }
 
 
@@ -81,9 +81,14 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 */
     }
 
-    protected void sendBodyToMapFragment(String text) {
+    protected void sendProviderInfoToMapFragment(String text) {
         Intent intent = new Intent("MapFragment.action.BOX_UPDATE");
         intent.putExtra("DATOS_PROVEEDOR", text);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    protected void mandarEmpiezaViajeMapFragment() {
+        Intent intent = new Intent("MapFragment.action.EMPIEZA_VIAJE");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -105,7 +110,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 //.setSmallIcon(R.drawable.logo)    IMAGEN DE LA NOTIFICACION
-                .setContentTitle(title)
+                .setContentTitle(textNombreServicio)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(soundUri)

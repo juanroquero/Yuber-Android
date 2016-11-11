@@ -24,6 +24,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Su Yuber esta en camino"
+                android:id="@+id/textEstadoFragmentoYubConfir"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:enabled="true"
+                android:textColor="#DF000000"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Destino"
                 android:id="@+id/textView2"
                 android:layout_gravity="center_horizontal"
