@@ -42,9 +42,8 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
                 sendProviderInfoToMapFragment(jsonData);
             }
             else if (tituloNotificacion.equals("Ubicacion proveedor")){
-                //
-                //TODO MANDAR LA UBICACION DEL PROVEEDOR CUANDO ESTA EN CAMINO
-                //
+                String jsonData = gson.toJson(data);
+                mandarUbicacionMapFragment(jsonData);
             }
             else if (tituloNotificacion.equals("Empieza el viaje")){
                 mandarEmpiezaViajeMapFragment();
@@ -62,12 +61,6 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 
-
-            //sendValueToFragment1("mocoooo");
-
-            //EventBus.getDefault().post(new MessageEvent("Vamos los piiiii!"));
-
-            // mostrarNotificacion(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }
 
 
@@ -90,6 +83,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 */
     }
 
+
     protected void sendProviderInfoToMapFragment(String text) {
         Intent intent = new Intent("MapFragment.action.YUBER_DISPONIBLE");
         intent.putExtra("DATOS_PROVEEDOR", text);
@@ -107,7 +101,11 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-
+    private void mandarUbicacionMapFragment(String text) {
+        Intent intent = new Intent("MapFragment.action.UBICACION_YUBER");
+        intent.putExtra("UBICACION", text);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 
 
     private void mostrarNotificacion(String title, String body) {

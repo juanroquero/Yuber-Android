@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestHandle;
@@ -75,6 +76,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public static final String ACTION_EMPIEZA_VIAJE = "MapFragment.action.EMPIEZA_VIAJE";
     public static final String ACTION_TERMINO_VIAJE = "MapFragment.action.TERMINO_VIAJE";
     public static final String ACTION_CALIFICAR_VIAJE = "MapFragment.action.CALIFICAR_VIAJE";
+    public static final String ACTION_UBICACION_YUBER = "MapFragment.action.UBICACION_YUBER";
     public static final String TAG = "MAPA";
 
     //Bander para las preferencias compartidas (obtener datos glovales)
@@ -86,24 +88,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     //del tutorial https://androidkennel.org/android-tutorial-getting-the-users-location/ para manejar el identificador del permiso concedido
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    private static final int REQUEST_LOCATION = 1 ;
 
     //banderas de conexion
     private String Ip = "54.213.51.6";
     private String Puerto = "8080";
 
-
+    // COSAS DEL MAPA
     MapView mMapView;
     private GoogleMap googleMap;
-    private static int REQUEST_LOCATION;
-
-
+    LocationRequest mLocationRequest; // NO ESTOY SEGURO PARA QUE SIRVE ESTO
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
     private Marker mOrigenMarker;
     private Marker mDestinationMarker;
+    private Marker mUbicacionYuberProveedor;
 
-    //
-    LocationRequest mLocationRequest;
 
     //Elementos del UI
     private Switch switchGPS;
@@ -209,6 +209,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         filter.addAction(ACTION_EMPIEZA_VIAJE);
         filter.addAction(ACTION_TERMINO_VIAJE);
         filter.addAction(ACTION_CALIFICAR_VIAJE);
+        filter.addAction(ACTION_UBICACION_YUBER);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
 
         Log.d(TAG, "SE CREO EL MAPA");
@@ -236,7 +237,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
              else if(ACTION_MI_UBICACION.equals(intent.getAction())) {
                 mostrarMiUbicacion();
              }
-             else if(ACTION_EMPIEZA_VIAJE.equals(intent.getAction())) {
+             else if(ACTION_EMPIEZA_VIAJE.equals(intent.getAction()) && mActualState == mapState.YUBER_EN_CAMINO) {
                 displayView(mapState.ELIGIENDO_DESTINO);
             }
             else if(ACTION_TERMINO_VIAJE.equals(intent.getAction())) {
@@ -247,6 +248,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 displayView(mapState.ELIGIENDO_ORIGEN);
                 String puntosViaje = intent.getStringExtra("PUNTAJE_VIAJE");
                 enviarPuntaje(puntosViaje);
+            }
+            else if(ACTION_UBICACION_YUBER.equals(intent.getAction())) {
+                String jsonUbicacion = intent.getStringExtra("UBICACION");
+                mostrarUbicacionYuber(jsonUbicacion);
             }
         }
     };
@@ -389,7 +394,60 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     //gennymotion
 // jwt token
+    private void mostrarUbicacionYuber(String jsonDataUbicacion) {
+        Log.d(TAG, "Adentro de mostrarUbicacionYuber" + jsonDataUbicacion);
+        if (mActualState == mapState.YUBER_EN_CAMINO)
+            //Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
+        if (mActualState == mapState.ELIGIENDO_DESTINO)
+         Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
+        if (mActualState == mapState.DESTINO_ELEGIDO)
+            Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
 
+
+
+
+        if (mActualState == mapState.YUBER_EN_CAMINO || mActualState == mapState.ELIGIENDO_DESTINO
+                || mActualState == mapState.DESTINO_ELEGIDO){
+
+            JSONObject dataUbicacion = null;
+            double latitud = 0;
+            double longitud = 1;
+            try {
+                dataUbicacion = new JSONObject(jsonDataUbicacion);
+                latitud = dataUbicacion.getDouble("latitud");
+                longitud = dataUbicacion.getDouble("longitud");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "Adentro de longitud" + latitud);
+            LatLng latLng = new LatLng(latitud,longitud);
+
+            //  mUbicacionYuberProveedor = googleMap.addMarker(new MarkerOptions().position(latLng).title("Ubicacion Yuber"));
+
+            if (mUbicacionYuberProveedor != null)
+                mUbicacionYuberProveedor.remove();
+
+            MarkerOptions options;
+            options = new MarkerOptions().position(latLng);
+            options.icon(BitmapDescriptorFactory.fromResource(R.drawable.customs));
+            mUbicacionYuberProveedor = googleMap.addMarker(options);
+            mUbicacionYuberProveedor.setTitle("Ubicacion Yuber");
+
+
+            /*
+            JSONObject dataUbicacion = new JSONObject(jsonDataUbicacion);
+            LatLng latLng = new LatLng(dataUbicacion.getDouble("latitud"),dataUbicacion.getDouble("longitud"));
+            mUbicacionYuberProveedor = googleMap.addMarker(new MarkerOptions().position(latLng).title("Ubicacion Yuber"));
+            if (mUbicacionYuberProveedor != null)
+                mUbicacionYuberProveedor.remove();
+            MarkerOptions options = new MarkerOptions().position(latLng);
+            options.icon(BitmapDescriptorFactory.fromResource(R.drawable.customs));
+            mUbicacionYuberProveedor.setTitle("Ubicacion Yuber");
+            mUbicacionYuberProveedor = googleMap.addMarker(options);
+            */
+        }
+    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -456,7 +514,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 break;
         }
     }
-
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -549,6 +606,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 if (mDestinationMarker != null){
                     mDestinationMarker.remove();
                     mDestinationMarker = null;
+                }
+                if (mUbicacionYuberProveedor != null){
+                    mUbicacionYuberProveedor.remove();
+                    mUbicacionYuberProveedor = null;
                 }
                 break;
             case BUSCANDO_YUBER:

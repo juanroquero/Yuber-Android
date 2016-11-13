@@ -3,14 +3,26 @@ package yuber.yuberClienteTransporte.activity;
 /**
  * Created by Agustin on 28-Oct-16.
  */
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;;import java.util.ArrayList;
+import android.widget.Toast;;import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import yuber.yuberClienteTransporte.R;
@@ -18,8 +30,19 @@ import yuber.yuberClienteTransporte.adapter.HistorialAdapter;
 
 public class HistoricFragment extends Fragment {
 
-    private List<Movie> movieList = new ArrayList<>();
+    private List<Historial> historialList = new ArrayList<>();
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String EmailKey = "emailKey";
+    public static final String HistorialKey = "historialKey";
+    public static final String TAG = "FRAGMENTO HISTORIAL";
+    SharedPreferences sharedpreferences;
+    private String Ip = "54.213.51.6";
+    private String Puerto = "8080";
 
+    private JSONObject rec;
+    private JSONObject datos;
+    private JSONObject datos2;
+    private JSONObject datos3;
 
     public HistoricFragment() {
         // Required empty public constructor
@@ -28,166 +51,161 @@ public class HistoricFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_historic, container, false);
 
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view_historic);
         rv.setHasFixedSize(true);
 
-        //LO NUEVO QUE HICE 30-OCT
-
         prepareMovieData();
-        HistorialAdapter adapter = new HistorialAdapter(movieList);
+        HistorialAdapter adapter = new HistorialAdapter(historialList);
 
-
-
-        // termina lo nuevo
-
-
-
-
-        //HistorialAdapter adapter = new HistorialAdapter(new String[]{"test one", "test two", "test three", "test four", "test five" , "test six" , "test seven", "test eight", "test nine", "test ten"});
         rv.setAdapter(adapter);
-
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
-
-
-/*
-        rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(rootView.getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //Movie movie = movieList.get(position);
-               //Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity().getApplicationContext(), position + " is selected!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-
-*/
 
         rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(getActivity().getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Movie movie = movieList.get(position);
-                Toast.makeText(getActivity().getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+                Historial historial = historialList.get(position);
+                sendBodyToMapFragment(historial);
             }
-
             @Override
             public void onLongClick(View view, int position) {
-
             }
         }));
-
-
-
         return rootView;
     }
 
-
-
-
-    private void prepareMovieData() {
-        Movie movie = new Movie("23/10/2016", "5 km", "$250");
-        movieList.add(movie);
-
-
-        movie = new Movie("20/010/2016", "4 km", "$200");
-        movieList.add(movie);
-
-        movie = new Movie("19/09/2016", "2,5 km", "$125");
-        movieList.add(movie);
-
-        movie = new Movie("19/09/2016", "3,5 km", "$175");
-        movieList.add(movie);
-
-        movie = new Movie("29/07/2016", "1 km", "$50");
-        movieList.add(movie);
-
-        movie = new Movie("19/05/2016", "10 km", "$500");
-        movieList.add(movie);
-
-        movie = new Movie("02/05/2016", "12 km", "$600");
-        movieList.add(movie);
-
-        movie = new Movie("29/03/2016", "3 km", "$150");
-        movieList.add(movie);
-
-        movie = new Movie("19/02/2016", "5 km", "$250");
-        movieList.add(movie);
-
-        movie = new Movie("19/01/2016", "1 km", "$50");
-        movieList.add(movie);
-
-        movie = new Movie("10/01/2016", "2,2km", "$110");
-        movieList.add(movie);
-
-        movie = new Movie("19/07/2015", "2 km", "$100");
-        movieList.add(movie);
-
-        movie = new Movie("01/01/2015", "12 km", "$600");
-        movieList.add(movie);
-
-
-/*
-        movie = new Movie("Inside Out", "Animation, Kids & Family", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Star Wars: Episode VII - The Force Awakens", "Action", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Shaun the Sheep", "Animation", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("The Martian", "Science Fiction & Fantasy", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Mission: Impossible Rogue Nation", "Action", "2015");
-        movieList.add(movie);
-
-        movie = new Movie("Up", "Animation", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("Star Trek", "Science Fiction", "2009");
-        movieList.add(movie);
-
-        movie = new Movie("The LEGO Movie", "Animation", "2014");
-        movieList.add(movie);
-
-        movie = new Movie("Iron Man", "Action & Adventure", "2008");
-        movieList.add(movie);
-
-        movie = new Movie("Aliens", "Science Fiction", "1986");
-        movieList.add(movie);
-
-        movie = new Movie("Chicken Run", "Animation", "2000");
-        movieList.add(movie);
-
-        movie = new Movie("Back to the Future", "Science Fiction", "1985");
-        movieList.add(movie);
-
-        movie = new Movie("Raiders of the Lost Ark", "Action & Adventure", "1981");
-        movieList.add(movie);
-
-        movie = new Movie("Goldfinger", "Action & Adventure", "1965");
-        movieList.add(movie);
-
-        movie = new Movie("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014");
-        movieList.add(movie);
-*/
-        //mAdapter.notifyDataSetChanged();
+    private void sendBodyToMapFragment(Historial historial) {
+        Bundle args = new Bundle();
+        args.putString("DatosHistorial", historial.toString());
+        FragmentDialogYuberHistorial newFragmentDialog = new FragmentDialogYuberHistorial();
+        newFragmentDialog.setArguments(args);
+        newFragmentDialog.show(getActivity().getSupportFragmentManager(), "TAG");
     }
 
+    private void prepareMovieData() {
+        SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String email = sharedpreferences.getString(EmailKey, "");
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/MisReseñasObtenidas/" + email;
+        Log.d(TAG, "LA URL ES: " + url);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(null, url, new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(HistorialKey, response);
+                editor.commit();
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                if(statusCode == 404){
+                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String Response = sharedpreferences.getString(HistorialKey, "");
+        agregarItems(Response);
+    }
+
+    private void agregarItems(String response){
+        //Datos que se consumen del JSON
+        String Comentario;
+        String Puntaje;
+        String Costo;
+        String Distancia;
+        String UbicacionJSON;
+        String LatitudO;
+        String LongitudO;
+        String LatitudD;
+        String LongitudD;
+        String instanciaServicioJSON;
+        String Fecha;
+        Historial historial;
+        try {
+            JSONArray arr_strJson = new JSONArray(response);
+            for (int i = 0; i < arr_strJson.length(); ++i) {
+                //rec todos los datos de una instancia servicio
+                rec = arr_strJson.getJSONObject(i);
+
+                //datos tiene los datos basicos
+                datos = new JSONObject(rec.toString());
+                Comentario = (String) datos.getString("reseñaComentario");
+                Puntaje = (String) datos.getString("reseñaPuntaje");
+                instanciaServicioJSON = (String) datos.getString("instanciaServicio");
+
+                //datos2 tiene los datos de la instanciaServicio
+                datos2 = new JSONObject(instanciaServicioJSON);
+                Costo = (String) datos2.getString("instanciaServicioCosto");
+                Distancia = (String) datos2.getString("instanciaServicioDistancia");
+                Fecha = (String) datos2.getString("instanciaServicioFechaInicio");
+
+                UbicacionJSON = (String) datos2.getString("ubicacion");
+                //datos3 tiene los datos de la ubicacion
+                datos3 = new JSONObject(UbicacionJSON);
+                LatitudO = (String) datos3.getString("latitud");
+                LongitudO = (String) datos3.getString("longitud");
+
+                UbicacionJSON = (String) datos2.getString("ubicacionDestino");
+                //datos3 tiene los datos de la ubicacion
+                datos3 = new JSONObject(UbicacionJSON);
+                LatitudD = (String) datos3.getString("latitud");
+                LongitudD = (String) datos3.getString("longitud");
+
+                double lat;
+                double lon;
+
+                lat = Double.parseDouble(LatitudO);
+                lon = Double.parseDouble(LongitudO);
+                String dirO = "-";
+                if ((lat != 0)&&(lon != 0)){
+                    dirO = getAddressFromLatLng(lat, lon);
+                }
+
+                lat = Double.parseDouble(LatitudD);
+                lon = Double.parseDouble(LongitudD);
+                String dirD = "-";
+                if ((lat != 0)&&(lon != 0)){
+                    dirD = getAddressFromLatLng(lat, lon);
+                }
+                //Agrego a la lista
+                historial = new Historial(Comentario, Puntaje, Costo, Distancia, dirO, dirD, Fecha);
+                historialList.add(historial);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getAddressFromLatLng(double lat, double lon) {
+        Geocoder geocoder = new Geocoder( getActivity() );
+        String address = "";
+        try {
+            address =geocoder
+                    .getFromLocation( lat, lon, 1 )
+                    .get( 0 ).getAddressLine( 0 ) ;
+        } catch (IOException e ) {
+            // this is the line of code that sends a real error message to the  log
+            Log.e("ERROR", "ERROR IN CODE: " + e.toString());
+            // this is the line that prints out the location in the code where the error occurred.
+            e.printStackTrace();
+            return "ERROR_IN_CODE";
+        }
+        return address;
+    }
 
 
 }
