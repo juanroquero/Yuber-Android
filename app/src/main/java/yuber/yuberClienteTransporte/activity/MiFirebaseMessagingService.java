@@ -18,6 +18,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Gson gson = new Gson();
         //      super.onMessageReceived(remoteMessage);
 
 
@@ -37,7 +38,6 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message textNombreServicio: " + tituloNotificacion );
 
             if (tituloNotificacion.equals("Tu Yuber esta en camino")){
-                Gson gson = new Gson();
                 String jsonData = gson.toJson(data);
                 sendProviderInfoToMapFragment(jsonData);
             }
@@ -48,6 +48,10 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
             }
             else if (tituloNotificacion.equals("Empieza el viaje")){
                 mandarEmpiezaViajeMapFragment();
+            }
+            else if (tituloNotificacion.equals("Filanizo su viaje")){
+                String jsonData = gson.toJson(data);
+                mandarTerminoViajeMapFragment(jsonData);
             }
 
 
@@ -87,13 +91,19 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     protected void sendProviderInfoToMapFragment(String text) {
-        Intent intent = new Intent("MapFragment.action.BOX_UPDATE");
+        Intent intent = new Intent("MapFragment.action.YUBER_DISPONIBLE");
         intent.putExtra("DATOS_PROVEEDOR", text);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     protected void mandarEmpiezaViajeMapFragment() {
         Intent intent = new Intent("MapFragment.action.EMPIEZA_VIAJE");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    protected void mandarTerminoViajeMapFragment(String text) {
+        Intent intent = new Intent("MapFragment.action.TERMINO_VIAJE");
+        intent.putExtra("DATOS_VIAJE", text);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

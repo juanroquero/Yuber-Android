@@ -74,7 +74,7 @@ public class FragmentDialogYuberDisponible extends DialogFragment {
         try {
             textoNombreProv.setText(mProveedor.getString("usuarioNombre"));
             textoAppellidoProv.setText(mProveedor.getString("usuarioApellido"));
-            textoMarcaModProv.setText(mProveedor.getString("marca") + " " + mProveedor.getString("modelo"));
+            //textoMarcaModProv.setText(mProveedor.getString("marca") + " " + mProveedor.getString("modelo"));
             textoTelefonoProv.setText(mProveedor.getString("usuarioTelefono"));
             stringPuntaje = mProveedor.getString("usuarioPromedioPuntaje");
         } catch (JSONException e) {

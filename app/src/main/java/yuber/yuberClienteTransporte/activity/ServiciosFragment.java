@@ -2,14 +2,12 @@ package yuber.yuberClienteTransporte.activity;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +109,7 @@ public class ServiciosFragment extends Fragment {
         rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(getActivity().getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-              cambiarAMain(position);
+              cambiarAMapa(position);
 
                 // set the toolbar textNombreServicio
             }
@@ -128,7 +126,7 @@ public class ServiciosFragment extends Fragment {
     }
 
 
-    public void cambiarAMain(int id){
+    public void cambiarAMapa(int id){
         Servicios servicios = servicioList.get(id);
         Gson gson = new Gson();
         String jsonServicio = gson.toJson(servicios);
