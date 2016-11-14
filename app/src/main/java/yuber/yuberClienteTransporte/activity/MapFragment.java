@@ -577,52 +577,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onMapClick(LatLng latLng) {
-
-
-        // Already two locations
-        if(markerPoints.size()>1){
-            markerPoints.clear();
-            googleMap.clear();
-        }
-
-        // Adding new item to the ArrayList
-        markerPoints.add(latLng);
-
-        // Creating MarkerOptions
-        MarkerOptions options = new MarkerOptions();
-
-        // Setting the position of the marker
-        options.position(latLng);
-
-        /**
-         * For the start location, the color of marker is GREEN and
-         * for the end location, the color of marker is RED.
-         */
-        if(markerPoints.size()==1){
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        }else if(markerPoints.size()==2){
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        }
-
-
-        // Add new marker to the Google Map Android API V2
-        googleMap.addMarker(options);
-
-        // Checks, whether start and end locations are captured
-        if(markerPoints.size() >= 2){
-            LatLng origin = markerPoints.get(0);
-            LatLng dest = markerPoints.get(1);
-
-            // Getting URL to the Google Directions API
-            String url = getDirectionsUrl(origin, dest);
-
-            DownloadTask downloadTask = new DownloadTask();
-
-            // Start downloading json data from Google Directions API
-            downloadTask.execute(url);
-        }
-
-        /*
         switch (mActualState) {
             case ELIGIENDO_ORIGEN:
                 textoUbicacion = (TextView) actualFragment.getView().findViewById(R.id.textUbicacionOrigen);
@@ -644,7 +598,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             default:
                 break;
         }
-        */
+
     }
 
     private void cambiarTextoDestinoFragmentoChico( LatLng latLng){
