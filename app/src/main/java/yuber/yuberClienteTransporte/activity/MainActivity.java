@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
 
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
     private String Puerto = "8080";
 
     public static final String MyPREFERENCES = "MyPrefs" ;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        Ip = getResources().getString(R.string.IP);
 
         //ADDED FOR TOOLBAR
         mToolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -38,7 +38,7 @@ public class SignUpActivity extends AppCompatActivity {
     public static final String PUBLISHABLE_KEY = "pk_test_4vfEzEuVKYT0Wzk5uvh3WEpa";
     private static final String TAG = "SignUpActivity";
 
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
     private String Puerto = "8080";
 
     private EditText nameText;
@@ -63,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        Ip = getResources().getString(R.string.IP);
 
         Button signupButton = (Button) findViewById(R.id.btn_signup);
         TextView loginLink = (TextView) findViewById(R.id.link_login);

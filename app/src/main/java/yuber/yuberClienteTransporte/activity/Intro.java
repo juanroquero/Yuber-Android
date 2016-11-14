@@ -28,7 +28,8 @@ public class Intro extends AppCompatActivity {
     public static final String TokenKey = "tokenKey";
     SharedPreferences sharedpreferences;
 
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
+
     private String Puerto = "8080";
 
     private static final String TAG = "INTRO";
@@ -38,6 +39,9 @@ public class Intro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+
+        Ip = getResources().getString(R.string.IP);
+
         if (getIntent().getExtras() != null) {
             for (String key : getIntent().getExtras().keySet()) {
                 String value = getIntent().getExtras().getString(key);

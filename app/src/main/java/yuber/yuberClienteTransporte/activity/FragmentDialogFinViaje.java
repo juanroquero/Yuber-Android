@@ -32,7 +32,7 @@ public class FragmentDialogFinViaje extends DialogFragment {
     private static final String TAG = FragmentDialogFinViaje.class.getSimpleName();
 
 
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
     private String Puerto = "8080";
 
     private RatingBar ratingBarPuntaje;
@@ -72,6 +72,8 @@ public class FragmentDialogFinViaje extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View v = inflater.inflate(R.layout.dialogo_fin_viaje, null);
+
+        Ip = getResources().getString(R.string.IP);
 
         builder.setView(v);
 

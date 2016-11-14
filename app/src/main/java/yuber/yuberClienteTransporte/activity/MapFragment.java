@@ -103,7 +103,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private static final int REQUEST_LOCATION = 1 ;
 
     //banderas de conexion
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
+    private String Ip2 = "54.203.12.195";
     private String Puerto = "8080";
 
     // COSAS DEL MAPA
@@ -143,6 +144,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         // inflat and return the layout
         View v = inflater.inflate(R.layout.fragment_mp, container,
                 false);
+        Ip = getResources().getString(R.string.IP);
 
 
         mMapView = (MapView) v.findViewById(R.id.mapView);

@@ -36,7 +36,7 @@ public class HistoricFragment extends Fragment {
     public static final String HistorialKey = "historialKey";
     public static final String TAG = "FRAGMENTO HISTORIAL";
     SharedPreferences sharedpreferences;
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
     private String Puerto = "8080";
 
     private JSONObject rec;
@@ -57,6 +57,7 @@ public class HistoricFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_historic, container, false);
+        Ip = getResources().getString(R.string.IP);
 
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view_historic);
         rv.setHasFixedSize(true);

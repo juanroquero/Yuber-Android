@@ -31,7 +31,7 @@ import yuber.yuberClienteTransporte.adapter.ServiciosAdapter;
 
 public class ServiciosFragment extends Fragment {
 
-    private String Ip = "54.213.51.6";
+    private String Ip = "";
     private String Puerto = "8080";
 
 
@@ -64,6 +64,7 @@ public class ServiciosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_servicios, container, false);
+        Ip = getResources().getString(R.string.IP);
 
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view);
         rv.setHasFixedSize(true);
