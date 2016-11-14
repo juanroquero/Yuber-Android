@@ -66,4 +66,13 @@
     <color name="light">#F8BBD0</color>
 
 
+
+
+    <!--   POSIBLEMENTE HAYA QUE MODIFICARLO!!!!
+    =========================================================
+    ######## SON PARA EL PAGO STRIPE #############
+    -->
+    <color name="spinnerItem">#AAAAAA</color>
+    <color name="editText">#AAAAAA</color>
+
 </resources>

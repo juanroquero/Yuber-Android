@@ -4,6 +4,7 @@ package yuber.yuberClienteTransporte.adapter;
  * Created by Agustin on 28-Oct-16.
  */
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import yuber.yuberClienteTransporte.activity.Servicios;
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyViewHolder> {
 
+
+    public static final String TAG = "HISTORIAL ADAPTER";
     private List<Historial> historialList;
 
     String titulo;
@@ -33,7 +36,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyVi
             super(view);
             titulo = (TextView) view.findViewById(R.id.titulo);
             subtitulo = (TextView) view.findViewById(R.id.subtitulo);
-            año = (TextView) view.findViewById(R.id.año);
+            año = (TextView) view.findViewById(R.id.ano);
         }
     }
 
@@ -62,8 +65,21 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyVi
         Historial historial = historialList.get(position);
 
         String[] splitDir = historial.getDireccionOrigen().split(" ");
-        String numero = splitDir[splitDir.length - 1];
-        String calle = splitDir[splitDir.length - 2];
+        String numero = "";
+        String calle = "";
+
+        try{
+            numero = splitDir[splitDir.length - 1];
+        }catch (Exception e){
+            Log.d(TAG, "Error parseando strings: " + e);
+            numero = "";
+        }
+        try{
+            calle = splitDir[splitDir.length - 2];
+        }catch (Exception e){
+            Log.d(TAG, "Error parseando strings: " + e);
+            calle = "";
+        }
         String Direccion = calle + " " + numero;
 
         titulo = "Destino: " + Direccion;

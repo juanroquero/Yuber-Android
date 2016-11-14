@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.greenrobot.eventbus.EventBus;
 
 import yuber.yuberClienteTransporte.R;
 
@@ -51,8 +50,6 @@ public class MapCallYuberFragment extends Fragment {
         botonMiUbicacion.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-
-              //  EventBus.getDefault().post(new MessageEvent("Mi Ubicacion"));
                 Intent intent = new Intent("MapFragment.action.MI_UBICACION");
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 

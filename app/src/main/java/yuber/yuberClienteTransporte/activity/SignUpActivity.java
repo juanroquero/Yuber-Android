@@ -3,16 +3,22 @@ package yuber.yuberClienteTransporte.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.stripe.android.Stripe;
+import com.stripe.android.TokenCallback;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
 
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHeader;
@@ -23,12 +29,18 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 import yuber.yuberClienteTransporte.R;
+import yuber.yuberClienteTransporte.dialog.ErrorDialogFragment;
+import yuber.yuberClienteTransporte.dialog.ProgressDialogFragment;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    private static final String CURRENCY_UNSPECIFIED = "Unspecified";
+    public static final String PUBLISHABLE_KEY = "pk_test_4vfEzEuVKYT0Wzk5uvh3WEpa";
     private static final String TAG = "SignUpActivity";
+
     private String Ip = "54.213.51.6";
     private String Puerto = "8080";
+
     private EditText nameText;
     private EditText addressText;
     private EditText emailText;
@@ -37,6 +49,15 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText reEnterPasswordText;
     private EditText LastNameText;
     private EditText ciudadText;
+
+
+    //======STRIPE ==================
+    Button saveButton;
+    EditText cardNumber;
+    EditText cvc;
+    Spinner monthSpinner;
+    Spinner yearSpinner;
+    Spinner currencySpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +94,23 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+        //======STRIPE ==================
+
+        this.cardNumber = (EditText) findViewById(R.id.number);
+        this.cvc = (EditText) findViewById(R.id.cvc);
+        this.monthSpinner = (Spinner) findViewById(R.id.expMonth);
+        this.yearSpinner = (Spinner) findViewById(R.id.expYear);
+        this.currencySpinner = (Spinner) findViewById(R.id.currency);
+        this.saveButton = (Button) findViewById(R.id.save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveCreditCard();
+            }
+        });
     }
 
     public void signup() {
@@ -290,6 +328,61 @@ public class SignUpActivity extends AppCompatActivity {
         return valid;
     }
 
+    //=============================================
+    // DEL PAGO CON STRIPE
+
+    private ProgressDialogFragment progressFragment;
+
+    public void saveCreditCard() {
+
+        Card card = new Card(
+                cardNumber.getText().toString(),
+                getInteger(this.monthSpinner),
+                getInteger(this.yearSpinner),
+                cvc.getText().toString());
+        card.setCurrency(getCurrency());
+
+        boolean validation = card.validateCard();
+        if (validation) {
+            startProgress();
+            new Stripe().createToken(
+                    card,
+                    PUBLISHABLE_KEY,
+                    new TokenCallback() {
+                        public void onSuccess(Token token) {
+                            //getTokenList().addToList(token);
+                            finishProgress();
+                        }
+                        public void onError(Exception error) {
+                            handleError(error.getLocalizedMessage());
+                            finishProgress();
+                        }
+                    });
+        } else if (!card.validateNumber()) {
+            handleError("The card number that you entered is invalid");
+        } else if (!card.validateExpiryDate()) {
+            handleError("The expiration date that you entered is invalid");
+        } else if (!card.validateCVC()) {
+            handleError("The CVC code that you entered is invalid");
+        } else {
+            handleError("The card details that you entered are invalid");
+        }
+    }
+
+
+    private void startProgress() {
+        progressFragment.show(getSupportFragmentManager(), "progress");
+    }
+
+    private void finishProgress() {
+        progressFragment.dismiss();
+    }
+
+    private void handleError(String error) {
+        DialogFragment fragment = ErrorDialogFragment.newInstance(R.string.validationErrors, error);
+        fragment.show(getSupportFragmentManager(), "error");
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -300,5 +393,29 @@ public class SignUpActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+
+    private Integer getInteger(Spinner spinner) {
+        try {
+            return Integer.parseInt(spinner.getSelectedItem().toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+
+    public String getCurrency() {
+        if (currencySpinner.getSelectedItemPosition() == 0) return null;
+        String selected = (String) currencySpinner.getSelectedItem();
+        if (selected.equals(CURRENCY_UNSPECIFIED))
+            return null;
+        else
+            return selected.toLowerCase();
+    }
+
+    public void saveForm(View button) {
+        this.saveCreditCard();
+    }
+
 
 }

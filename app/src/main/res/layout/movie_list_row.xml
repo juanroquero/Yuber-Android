@@ -33,7 +33,7 @@
                 android:layout_below="@+id/titulo"/>
 
             <TextView
-                android:id="@+id/año"
+                android:id="@+id/ano"
                 android:textColor="@color/year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

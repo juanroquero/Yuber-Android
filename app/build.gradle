@@ -38,8 +38,10 @@ dependencies {
 
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 
+    compile 'com.stripe:stripe-android:+'
+
     //http://greenrobot.org/eventbus/
-    compile 'org.greenrobot:eventbus:3.0.0'
+    //compile 'org.greenrobot:eventbus:3.0.0'
 
 } // FIN  DEPENDENCIES
 

@@ -116,6 +116,19 @@
 
 
 
+    <!-- ################################### -->
+    <!-- Strings relativos al Stripe  -->
+    <string-array name="currency_array">
+        <item>Currency (optional)</item>
+        <item>Unspecified</item>
+        <item>USD</item>
+    </string-array>
+    <string name="cvc">CVC</string>
+    <string name="cardNumber">Card Number</string>
+    <string name="ok">OK</string>
+    <string name="endingIn">Card ending in </string>
+    <string name="progressMessage">Creating Token&#8230;</string>
+    <string name="validationErrors">Validation Errors</string>
 
 
 </resources>
