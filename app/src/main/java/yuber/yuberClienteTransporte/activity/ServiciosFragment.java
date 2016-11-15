@@ -71,7 +71,7 @@ public class ServiciosFragment extends Fragment {
 
         //LO NUEVO QUE HICE 30-OCT
 
-        prepareMovieData();
+        obtenerServiciosDisponibles();
         ServiciosAdapter adapter = new ServiciosAdapter(servicioList);
 
 
@@ -111,13 +111,10 @@ public class ServiciosFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
               cambiarAMapa(position);
-
-                // set the toolbar textNombreServicio
             }
 
             @Override
             public void onLongClick(View view, int position) {
-
             }
         }));
 
@@ -149,7 +146,7 @@ public class ServiciosFragment extends Fragment {
     }
 
 
-    private void prepareMovieData() {
+    private void obtenerServiciosDisponibles() {
 
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerServicios/Transporte" ;
         AsyncHttpClient client = new AsyncHttpClient();
@@ -203,7 +200,7 @@ public class ServiciosFragment extends Fragment {
 
 /*
 
-    private void prepareMovieData() {
+    private void obtenerServiciosDisponibles() {
         Movie movie = new Movie("Auto", "5 km", "$250");
         movieList.add(movie);
 

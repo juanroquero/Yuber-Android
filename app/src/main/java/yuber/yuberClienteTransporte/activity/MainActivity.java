@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         return emailSession;
     }
 
+    public int getmIdServicio(){
+        return mIdServicio;
+    }
+
     public void setmIdServicio(int id){
         mIdServicio = id;
     }
@@ -142,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 try {
                     JSONObject jsonServicio = new JSONObject(stringJsonServicio);
                     nombreServicio = jsonServicio.getString("mNombre");
+                    mIdServicio = jsonServicio.getInt("mID");
                 } catch (JSONException e) {
                     e.printStackTrace();
                     nombreServicio = "ERROR";

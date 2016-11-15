@@ -62,7 +62,7 @@ public class HistoricFragment extends Fragment {
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view_historic);
         rv.setHasFixedSize(true);
 
-        prepareMovieData();
+        obtenerServiciosDisponibles();
         HistorialAdapter adapter = new HistorialAdapter(historialList);
 
         rv.setAdapter(adapter);
@@ -90,10 +90,12 @@ public class HistoricFragment extends Fragment {
         newFragmentDialog.show(getActivity().getSupportFragmentManager(), "TAG");
     }
 
-    private void prepareMovieData() {
+    private void obtenerServiciosDisponibles() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        int idServicio = mainActivity.getmIdServicio();
         SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
         String email = sharedpreferences.getString(EmailKey, "");
-        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/MisReseñasObtenidas/" + email;
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/ObtenerHistorial/" + email + "," + idServicio;
         Log.d(TAG, "LA URL ES: " + url);
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(null, url, new AsyncHttpResponseHandler(){
