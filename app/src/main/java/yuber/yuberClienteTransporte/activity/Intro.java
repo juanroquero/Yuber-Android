@@ -59,18 +59,6 @@ public class Intro extends AppCompatActivity {
         TengoSession(token);
 
 
-
-
-
-        //BOTON OPCIONAL PARA SALTEARSE EL LOGIN // SACAR EN LA IMPLEMENTACION
-        Button botonSaltearLogin = (Button) findViewById(R.id.button4);
-        botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                saltearLogin(v);
-
-            }
-        });
-
     }
 
     public void saltearLogin(View view){

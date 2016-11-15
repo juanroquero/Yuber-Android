@@ -22,7 +22,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import yuber.yuberClienteTransporte.R;
@@ -151,9 +154,21 @@ public class HistoricFragment extends Fragment {
 
                 //datos2 tiene los datos de la instanciaServicio
                 datos2 = new JSONObject(instanciaServicioJSON);
+                System.out.println("--el json paa:" + datos2);
                 Costo = (String) datos2.getString("instanciaServicioCosto");
                 Distancia = (String) datos2.getString("instanciaServicioDistancia");
                 Fecha = (String) datos2.getString("instanciaServicioFechaInicio");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aa");
+                Date convertedDate = new Date();
+                try {
+                    Date Fechaconvertida = dateFormat.parse(Fecha);
+                    String fecha = Fechaconvertida.toString();
+                    System.out.println("--fecha cool:" + fecha);
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
 
                 UbicacionJSON = (String) datos2.getString("ubicacion");
                 //datos3 tiene los datos de la ubicacion

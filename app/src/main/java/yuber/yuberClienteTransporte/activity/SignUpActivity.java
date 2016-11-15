@@ -132,6 +132,7 @@ public class SignUpActivity extends AppCompatActivity {
         //*****************  Consulta a BD si existe el user ********************//
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/RegistrarCliente/";
         JSONObject obj = new JSONObject();
+        JSONObject objVert = new JSONObject();
         try {
             obj.put("usuarioDireccion", address);
             obj.put("usuarioContraseña", password);
@@ -142,13 +143,16 @@ public class SignUpActivity extends AppCompatActivity {
             obj.put("usuarioCorreo", email);
             obj.put("usuarioCiudad", ciudad);
             obj.put("estado", "OK");
+
+            objVert.put("tipoVertical", "Transporte");
+            objVert.put("cliente", obj);
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         AsyncHttpClient client = new AsyncHttpClient();
         ByteArrayEntity entity = null;
         try {
-            entity = new ByteArrayEntity(obj.toString().getBytes("UTF-8"));
+            entity = new ByteArrayEntity(objVert.toString().getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -156,13 +160,13 @@ public class SignUpActivity extends AppCompatActivity {
         client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
-                if (response.contains("Ok")){
+                if (response.contains("true")){
                     //Mando el token de la tarjeta
                     saveCreditCard();
                     //llamo a login para que cree la session
                     login();
                 }else{
-                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                 }
             }
             @Override
