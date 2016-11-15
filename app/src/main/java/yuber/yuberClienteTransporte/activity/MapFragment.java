@@ -89,6 +89,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public static final String ACTION_TERMINO_VIAJE = "MapFragment.action.TERMINO_VIAJE";
     public static final String ACTION_CALIFICAR_VIAJE = "MapFragment.action.CALIFICAR_VIAJE";
     public static final String ACTION_UBICACION_YUBER = "MapFragment.action.UBICACION_YUBER";
+    public static final String ACTION_CONTADOR_FINALIZO = "MapFragment.action.CONTADOR_FINALIZO";
     public static final String TAG = "MAPA";
 
     //Bander para las preferencias compartidas (obtener datos glovales)
@@ -176,6 +177,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             e.printStackTrace();
         }
 
+
+        /*
         //seteando listener en boton OK ----> to be deeleted
         Button botonOK = (Button) v.findViewById(R.id.button3);
         botonOK.setOnClickListener(new View.OnClickListener() {
@@ -220,8 +223,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         break;
                 }
                 */
-            }
-        });
+
+        //});
 
 
 
@@ -241,6 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         filter.addAction(ACTION_TERMINO_VIAJE);
         filter.addAction(ACTION_CALIFICAR_VIAJE);
         filter.addAction(ACTION_UBICACION_YUBER);
+        filter.addAction(ACTION_CONTADOR_FINALIZO);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ActivityDataReceiver, filter);
 
         Log.d(TAG, "SE CREO EL MAPA");
@@ -289,6 +293,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 enviarPuntaje(puntosViaje);
             }
             else if(ACTION_UBICACION_YUBER.equals(intent.getAction())) {
+                String jsonUbicacion = intent.getStringExtra("UBICACION");
+                mostrarUbicacionYuber(jsonUbicacion);
+            }
+            else if(ACTION_CONTADOR_FINALIZO.equals(intent.getAction())) {
                 String jsonUbicacion = intent.getStringExtra("UBICACION");
                 mostrarUbicacionYuber(jsonUbicacion);
             }
@@ -639,7 +647,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             case ELIGIENDO_ORIGEN:
                 mButtonLlammarUber.setEnabled(true);
                 mButtonLlammarUber.setText("SOLICITAR");
-                actualFragment = new MapCallYuberFragment();
                 if (mOrigenMarker != null){
                     mOrigenMarker.remove();
                     mOrigenMarker = null;
@@ -652,6 +659,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     mUbicacionYuberProveedor.remove();
                     mUbicacionYuberProveedor = null;
                 }
+                actualFragment = new MapCallYuberFragment();
                 break;
             case BUSCANDO_YUBER:
                 // Se modifica el icono del Marker
@@ -664,6 +672,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 options.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_52));
                 mOrigenMarker = googleMap.addMarker(options);
                 mOrigenMarker.setTitle("Origen");
+                empezarContador();
 
                 actualFragment = new MapWaitYFragment();
                 break;
@@ -689,6 +698,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.containerMiniFrameMapFragment, actualFragment);
             fragmentTransaction.commit();
+        }
+    }
+
+    private void empezarContador() {
+        new Thread(new Runnable() {
+            public void run() {
+                TemporizadorProv temp = new TemporizadorProv();
+                temp.esperarXsegundos(10);
+                //finTemporizador();
+            }
+        }).start();
+    }
+
+    private void finTemporizador() {
+        if (mActualState == mapState.BUSCANDO_YUBER){
+            displayView(mapState.ELIGIENDO_ORIGEN);
+            Toast.makeText(getActivity().getApplicationContext(), "Ningun Yuber acepto tu solicitud", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -795,18 +821,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         int idString = obj.getInt("id");
                         guardarIdInstanciaServicio(idString);
                         mButtonLlammarUber.setText("CANCELAR");
-                        Toast.makeText(getActivity().getApplicationContext(), "Se pidio el servicio con exito", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity().getApplicationContext(), "Se pidio el servicio con exito", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         Toast.makeText(getActivity().getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
                     }
                 }else{
-                    Toast.makeText(getActivity().getApplicationContext(), "El usuario y/o contraseña son incorrectos", Toast.LENGTH_LONG).show();
+                    displayView(mapState.ELIGIENDO_ORIGEN);
+                    Toast.makeText(getActivity().getApplicationContext(), "No hay Yuber disponibles en su zona", Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
-
-                mActualState = mapState.ELIGIENDO_ORIGEN;
                 displayView(mapState.ELIGIENDO_ORIGEN);
                 if(statusCode == 404){
                     Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
@@ -951,7 +976,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 */
 
     }
-
 
 
     public void enviarPuntaje(String puntaje){
