@@ -715,7 +715,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     private void finTemporizador() {
         if (mActualState == mapState.BUSCANDO_YUBER){
-            displayView(mapState.ELIGIENDO_ORIGEN);
+            cancelarServicioOnline();
             Toast.makeText(getActivity().getApplicationContext(), "Ningun Yuber acepto tu solicitud", Toast.LENGTH_LONG).show();
         }
     }
