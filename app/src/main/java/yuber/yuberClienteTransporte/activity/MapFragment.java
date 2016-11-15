@@ -66,6 +66,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Handler;
 
 import yuber.yuberClienteTransporte.R;
 
@@ -139,6 +140,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     ProgressDialog prgDialog;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -177,7 +179,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             e.printStackTrace();
         }
 
-
+// <editor-fold defaultstate="collapsed" desc="Boton Ok eliminado">
         /*
         //seteando listener en boton OK ----> to be deeleted
         Button botonOK = (Button) v.findViewById(R.id.button3);
@@ -225,7 +227,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 */
 
         //});
-
+        // </editor-fold>
 
 
 
@@ -297,8 +299,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 mostrarUbicacionYuber(jsonUbicacion);
             }
             else if(ACTION_CONTADOR_FINALIZO.equals(intent.getAction())) {
-                String jsonUbicacion = intent.getStringExtra("UBICACION");
-                mostrarUbicacionYuber(jsonUbicacion);
+                finTemporizador();
             }
         }
     };
@@ -705,8 +706,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         new Thread(new Runnable() {
             public void run() {
                 TemporizadorProv temp = new TemporizadorProv();
-                temp.esperarXsegundos(10);
-                //finTemporizador();
+                temp.esperarXsegundos(60);
+                Intent intent = new Intent(ACTION_CONTADOR_FINALIZO);
+                LocalBroadcastManager.getInstance(getActivity().getBaseContext()).sendBroadcast(intent);
             }
         }).start();
     }
