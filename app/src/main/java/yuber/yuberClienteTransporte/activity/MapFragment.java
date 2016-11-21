@@ -49,7 +49,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestHandle;
 
-
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
@@ -66,7 +65,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Handler;
 
 import yuber.yuberClienteTransporte.R;
 
@@ -178,58 +176,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-// <editor-fold defaultstate="collapsed" desc="Boton Ok eliminado">
-        /*
-        //seteando listener en boton OK ----> to be deeleted
-        Button botonOK = (Button) v.findViewById(R.id.button3);
-        botonOK.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                // Checks, whether start and end locations are captured
-                if(markerPoints.size() >= 2){
-                    LatLng origin = markerPoints.get(0);
-                    LatLng dest = markerPoints.get(1);
-
-                    // Getting URL to the Google Directions API
-                    String url = getDirectionsUrl(origin, dest);
-
-                    DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
-                }
-
-                /*
-                switch (mActualState) {
-                    case ELIGIENDO_ORIGEN:
-                        //mostrarViajeFinalizado();
-                        LatLng latLng = mOrigenMarker.getPosition();;
-                        mOrigenMarker.remove();
-                        MarkerOptions options;
-                        options = new MarkerOptions().position(latLng);
-                        options.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_52));
-                        mOrigenMarker = googleMap.addMarker(options);
-                        mOrigenMarker.setTitle("Origen");
-
-                        break;
-                    case BUSCANDO_YUBER:
-                        String test = "{\"usuarioPromedioPuntaje\":2.5,\"usuarioCorreo\":\"maxi@gmail.com\", \"usuarioTelefono\":\"098839498\",\"usuarioNombre\":\"ElMasi\",\"usuarioApellido\":\"Barnech\", \"marca\":\"BMW\", \"modelo\":\"320\",\"estado\":\"Ok\"}";
-                        mostrarDialAceptarProveedor(test);
-                        //login_user()
-                        break;
-                    case DESTINO_ELEGIDO:
-                        enviarPuntaje("19");
-                        break;
-                    default:
-                        break;
-                }
-                */
-
-        //});
-        // </editor-fold>
-
-
 
         // PARA TESTING... SEGURAMENTE SIN USO FUTURO, PODRIA SER ELIMINADO O REUSADO EN OTRO CODIGO
         // Instantiate Progress Dialog object

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:paddingTop="@dimen/dialog_body"
+    android:paddingTop="10dp"
+    android:paddingBottom="18dp"
     android:paddingLeft="@dimen/dialog_body">
 
 
@@ -36,12 +37,13 @@
              android:orientation="vertical"
              android:layout_width="0dp"
              android:layout_height="wrap_content"
-             android:layout_weight="1">
+             android:layout_weight="0.85">
 
              <TextView
                  android:id="@+id/text_dialog_yub_disp_nombre"
                  android:text="Nombre"
                  android:layout_width="match_parent"
+                 android:paddingBottom="6dp"
                  android:layout_height="wrap_content"
                  android:layout_weight="1"
                  android:textColor="@color/textColorSecondaryBlack"/>
@@ -57,14 +59,14 @@
 
          <LinearLayout
              android:orientation="vertical"
-             android:layout_width="0dp"
+             android:layout_width="20dp"
              android:layout_height="match_parent"
-             android:layout_weight="1"
+             android:layout_weight="1.25"
              android:gravity="center_vertical">
 
              <RatingBar
                  android:id="@+id/ratingBarYuberDispo"
-                 style="?android:attr/ratingBarStyleSmall"
+                 style="@android:style/Widget.DeviceDefault.Light.RatingBar.Indicator"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_marginRight="53dp"
@@ -75,14 +77,37 @@
 
 
      </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_below="@+id/layout3_dialogo_llego_yuber"
+        android:gravity="center_vertical|right"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="20dp"
+        >
+
+        <Button
+            android:id="@+id/boton_aceptar_yuber"
+            android:text="ACEPTAR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="0dp" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/layout3_dialogo_llego_yuber"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_dialogo_llego_yuber"
         android:paddingBottom="@dimen/normal_padding"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:layout_below="@+id/layout_dialogo_llego_yuber"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/text_dialog_yub_disp_telefono"
@@ -99,32 +124,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/textColorSecondaryBlack" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_below="@+id/layout3_dialogo_llego_yuber"
-        android:gravity="center_vertical|right"
-        android:layout_marginBottom="2dp">
-
-        <Button
-            android:id="@+id/boton_cancelar_yuber"
-            android:text="CANCELAR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_marginRight="@dimen/normal_padding"/>
-
-        <Button
-            android:id="@+id/boton_aceptar_yuber"
-            android:text="ACEPTAR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_marginRight="12dp"
-            android:layout_marginLeft="0dp" />
     </LinearLayout>
 
 

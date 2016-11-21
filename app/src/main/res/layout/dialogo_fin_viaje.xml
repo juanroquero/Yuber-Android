@@ -19,32 +19,6 @@
 
 
     <LinearLayout
-        android:id="@+id/layour_distancia_fin_viaje"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/normal_padding"
-        android:weightSum="2"
-        android:layout_below="@+id/info_text">>
-
-        <TextView
-            android:text="Distancia"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/textColorPrimaryBlack" />
-
-        <TextView
-            android:id="@+id/text_distancia_variable_fin_viaje"
-            android:text="$$"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:textColor="@color/textColorPrimaryBlack" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/layout_costo_fin_viaje"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -97,6 +71,34 @@
         android:text="OK"
         android:textColor="@android:color/black"
         android:layout_below="@+id/ratingBarFinViaje" />
+
+    <LinearLayout
+        android:id="@+id/layour_distancia_fin_viaje"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/normal_padding"
+        android:weightSum="2"
+        android:layout_below="@+id/info_text"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">>
+
+        <TextView
+            android:text="Distancia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/textColorPrimaryBlack" />
+
+        <TextView
+            android:id="@+id/text_distancia_variable_fin_viaje"
+            android:text="$$"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="@color/textColorPrimaryBlack" />
+    </LinearLayout>
 
 
 </RelativeLayout>
