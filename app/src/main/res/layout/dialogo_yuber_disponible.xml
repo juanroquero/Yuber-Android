@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:paddingTop="10dp"
-    android:paddingBottom="18dp"
     android:paddingLeft="@dimen/dialog_body">
 
 
@@ -21,23 +20,21 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
-     <LinearLayout
+     <RelativeLayout
          android:id="@+id/layout_dialogo_llego_yuber"
          android:orientation="horizontal"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:layout_below="@+id/yuber_en_camino"
-         android:paddingBottom="@dimen/normal_padding"
-         android:weightSum="2">
+         android:paddingBottom="@dimen/normal_padding">
 
 
 
 
          <LinearLayout
              android:orientation="vertical"
-             android:layout_width="0dp"
-             android:layout_height="wrap_content"
-             android:layout_weight="0.85">
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content">
 
              <TextView
                  android:id="@+id/text_dialog_yub_disp_nombre"
@@ -45,7 +42,6 @@
                  android:layout_width="match_parent"
                  android:paddingBottom="6dp"
                  android:layout_height="wrap_content"
-                 android:layout_weight="1"
                  android:textColor="@color/textColorSecondaryBlack"/>
 
              <TextView
@@ -59,9 +55,10 @@
 
          <LinearLayout
              android:orientation="vertical"
-             android:layout_width="20dp"
-             android:layout_height="match_parent"
-             android:layout_weight="1.25"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentRight="true"
+             android:layout_marginRight="@dimen/dialog_body"
              android:gravity="center_vertical">
 
              <RatingBar
@@ -69,14 +66,13 @@
                  style="@android:style/Widget.DeviceDefault.Light.RatingBar.Indicator"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:layout_marginRight="53dp"
-                 android:layout_marginEnd="53dp"
                  android:fillViewport="true"
+                 android:numStars="5"
                  />
          </LinearLayout>
 
 
-     </LinearLayout>
+     </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -85,7 +81,7 @@
         android:layout_below="@+id/layout3_dialogo_llego_yuber"
         android:gravity="center_vertical|right"
         android:layout_marginBottom="2dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="6dp"
         >
 
         <Button
@@ -94,7 +90,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button"
-            android:layout_marginRight="12dp"
             android:layout_marginLeft="0dp" />
     </LinearLayout>
 

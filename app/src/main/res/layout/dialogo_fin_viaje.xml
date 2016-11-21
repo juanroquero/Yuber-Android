@@ -56,8 +56,9 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="53dp"
         android:layout_marginEnd="53dp"
+        android:numStars="5"
         android:layout_below="@+id/layout_costo_fin_viaje"
-        android:stepSize="1"/>
+        android:stepSize="0.5"/>
 
 
     <Button

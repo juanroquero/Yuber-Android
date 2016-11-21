@@ -361,11 +361,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
 
-/*
-        mCurrentLocation = LocationServices
-                .FusedLocationApi
-                .getLastLocation(mGoogleApiClient);
-*/
 
     /*
         podria usarse para hallar la velociad y mandarlo?
