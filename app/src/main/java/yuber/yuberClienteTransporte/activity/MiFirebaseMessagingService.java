@@ -34,6 +34,7 @@ public class MiFirebaseMessagingService extends FirebaseMessagingService {
 
 
             String tituloNotificacion = remoteMessage.getNotification().getTitle();
+            Log.d(TAG, "Message data payload: " + data);
 
             Log.d(TAG, "Message textNombreServicio: " + tituloNotificacion );
 

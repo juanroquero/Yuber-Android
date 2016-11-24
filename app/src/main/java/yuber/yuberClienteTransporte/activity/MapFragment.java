@@ -928,7 +928,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         client.get(null, url, new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
-                Toast.makeText(getActivity().getApplicationContext(), "puntuo!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity().getApplicationContext(), "puntuo!", Toast.LENGTH_LONG).show();
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
