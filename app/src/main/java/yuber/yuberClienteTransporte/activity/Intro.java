@@ -48,7 +48,7 @@ public class Intro extends AppCompatActivity {
             }
         }
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "SESIIIIIIIIIIIION con token :" + token);
+        Log.d(TAG, "SESION con token :" + token);
         //Guardo el token en session
         SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -58,7 +58,17 @@ public class Intro extends AppCompatActivity {
         //Combruebo si ya tengo session.
         TengoSession(token);
 
+        /*
+        //BOTON OPCIONAL PARA SALTEARSE EL LOGIN // SACAR EN LA IMPLEMENTACION
+        Button botonSaltearLogin = (Button) findViewById(R.id.button8);
+        botonSaltearLogin.setVisibility(View.VISIBLE);
+        botonSaltearLogin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                saltearLogin(v);
 
+            }
+        });
+        */
     }
 
     public void saltearLogin(View view){
