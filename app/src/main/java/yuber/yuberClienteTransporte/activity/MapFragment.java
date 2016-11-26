@@ -563,7 +563,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         textoUbicacion.setText(getAddressFromLatLng(latLng));
     }
 
-
     private String getAddressFromLatLng( LatLng latLng ) {
         Geocoder geocoder = new Geocoder( getActivity() );
         String address = "";
@@ -580,7 +579,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
         return address;
     }
-
 
     private void displayView(mapState estado) {
         mActualState = estado;
@@ -661,7 +659,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-
     private View.OnClickListener createListenerBottomButton(){
         View.OnClickListener clickListtener = new View.OnClickListener() {
             public void onClick(View v) {
@@ -701,29 +698,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         return clickListtener;
     }
 
-
-
-
     private void mostrarViajeFinalizado(String datosViaje){
-
-        //A USARSE EN UN FUTURO PARA MANDAR ARGUMENTOS
         Bundle args = new Bundle();
         args.putString("datosViaje", datosViaje);
         FragmentDialogFinViaje dialogoFinViajeYCalificar = new FragmentDialogFinViaje();
         dialogoFinViajeYCalificar.setArguments(args);
+        dialogoFinViajeYCalificar.setCancelable(false);
         dialogoFinViajeYCalificar.show(getActivity().getSupportFragmentManager(), "TAG");
     }
 
     private void mostrarDialAceptarProveedor(String jProveedor){
-
         Bundle args = new Bundle();
         args.putString("datos", jProveedor);
         FragmentDialogYuberDisponible newFragmentDialog = new FragmentDialogYuberDisponible();
         newFragmentDialog.setArguments(args);
+        newFragmentDialog.setCancelable(false);
         newFragmentDialog.show(getActivity().getSupportFragmentManager(), "TAG");
-
     }
-
 
     private void pedirServicio(){
         mButtonLlammarUber.setEnabled(false);
@@ -789,7 +780,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
-
     private void mandarDestinoAlServidor(){
         mButtonLlammarUber.setEnabled(false);
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Cliente/AgregarDestino/"+
@@ -800,7 +790,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             @Override
             public void onSuccess(String response) {
                 displayView(mapState.DESTINO_ELEGIDO);
-                Toast.makeText(getActivity().getApplicationContext(), "Se mando el destino con exito", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity().getApplicationContext(), "Se mando el destino con exito", Toast.LENGTH_LONG).show();
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
@@ -849,14 +839,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         displayView(mapState.ELIGIENDO_ORIGEN);
     }
 
-
     private void guardarIdInstanciaServicio(int id) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(InstanciaServicioIDKey, id);
         editor.commit();
         mIdInstanciaServicio = id;
     }
-
 
     @Override
     public void onResume() {
@@ -881,7 +869,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
 
     @Override
     public void onLocationChanged(Location location)
@@ -919,7 +906,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 */
 
     }
-
 
     public void enviarPuntaje(String puntaje){
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Proveedor/PuntuarProveedor/" + puntaje + ",-," + mIdInstanciaServicio;
