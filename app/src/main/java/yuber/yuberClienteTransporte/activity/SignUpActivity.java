@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import yuber.yuberClienteTransporte.R;
 import yuber.yuberClienteTransporte.dialog.ErrorDialogFragment;
 import yuber.yuberClienteTransporte.dialog.ProgressDialogFragment;
+import android.app.ProgressDialog;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -49,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText reEnterPasswordText;
     private EditText LastNameText;
     private EditText ciudadText;
+    ProgressDialog prgDialog;
 
 
     //======STRIPE ==================
@@ -96,6 +99,12 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
 
+        // Instantiate Progress Dialog object
+        prgDialog = new ProgressDialog(this);
+        // Set Progress Dialog Text
+        prgDialog.setMessage("Creando su cuenta...");
+        // Set Cancelable as False
+        prgDialog.setCancelable(false);
 
 
         //======STRIPE ==================
@@ -115,12 +124,15 @@ public class SignUpActivity extends AppCompatActivity {
         Button signupButton = (Button) findViewById(R.id.btn_signup);
         signupButton.setEnabled(false);
 
+        prgDialog.show();
+
         final ProgressDialog progressDialog = new ProgressDialog(SignUpActivity.this,
                 R.style.AppTheme_Dialog);
+        /*
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creando su cuenta...");
         progressDialog.show();
-
+        */
         String name = nameText.getText().toString();
         String LastName = LastNameText.getText().toString();
         String address = addressText.getText().toString();
@@ -160,13 +172,14 @@ public class SignUpActivity extends AppCompatActivity {
         client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
-                if (response.contains("true")){
+                Log.d(TAG, "onSucces del RegistrarCliente: " + response);
+                if (response.contains("Ok")){
                     //Mando el token de la tarjeta
                     saveCreditCard();
                     //llamo a login para que cree la session
                     login();
                 }else{
-                    //Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                 }
             }
             @Override
@@ -184,7 +197,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
-                    public void run() {onSignupSuccess();progressDialog.dismiss(); }
+                    public void run() {
+                        onSignupSuccess();
+                        //progressDialog.dismiss();
+                    }
                 }, 3000);
 
     }
@@ -222,7 +238,8 @@ public class SignUpActivity extends AppCompatActivity {
         client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
-                if (response.contains("Ok")){
+                Log.d(TAG, "onSucces del Cliente/Login: " + response);
+                if (response.contains("true")){
                     Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homeIntent);
@@ -376,6 +393,7 @@ public class SignUpActivity extends AppCompatActivity {
                             client.get(null, url, new AsyncHttpResponseHandler(){
                                 @Override
                                 public void onSuccess(String response) {
+                                    Log.d(TAG, "onSucces del AsociarMecanismoDePago: " + response);
                                     if (response.contains("Ok")){
                                         //nada
                                     }else{
@@ -409,11 +427,13 @@ public class SignUpActivity extends AppCompatActivity {
         } else {
             handleError("Los detalles de la tarjeta ingresada son inválidos");
         }
+
     }
 
 
     private void startProgress() {
-        progressFragment.show(getSupportFragmentManager(), "progress");
+        //progressFragment.show(getSupportFragmentManager(), "progress");
+        //progressFragment.show();
     }
 
     private void finishProgress() {
