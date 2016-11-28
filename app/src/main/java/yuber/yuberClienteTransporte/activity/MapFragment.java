@@ -2,6 +2,7 @@ package yuber.yuberClienteTransporte.activity;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -60,6 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -205,13 +207,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
         // Perform any camera updates here
 
-
-
         //PARA LA CREACION DE RUTAS
         // Initializing
         markerPoints = new ArrayList<LatLng>();
 
         mainActivity = (MainActivity)getActivity();
+
 
         return v;
     } // FIN onCreate()
@@ -256,7 +257,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void agregoALista(String puntaje){
         punt = puntaje;
         SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
-        String instanciaID = sharedpreferences.getString(InstanciaServicioIDKey, "");
+        String instanciaID = "" + sharedpreferences.getInt(InstanciaServicioIDKey, -33333);
 
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerInstanciaServicio/" + instanciaID;
         AsyncHttpClient client = new AsyncHttpClient();
@@ -450,17 +451,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     //gennymotion
 // jwt token
     private void mostrarUbicacionYuber(String jsonDataUbicacion) {
-        Log.d(TAG, "Adentro de mostrarUbicacionYuber" + jsonDataUbicacion);
-        if (mActualState == mapState.YUBER_EN_CAMINO)
-            //Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
-        if (mActualState == mapState.ELIGIENDO_DESTINO)
-         Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
-        if (mActualState == mapState.DESTINO_ELEGIDO)
-            Log.d(TAG, "Adentro de mostrarUbicacionYuber" + mActualState);
-
-
-
-
         if (mActualState == mapState.YUBER_EN_CAMINO || mActualState == mapState.ELIGIENDO_DESTINO
                 || mActualState == mapState.DESTINO_ELEGIDO){
 
@@ -769,6 +759,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         FragmentDialogFinViaje dialogoFinViajeYCalificar = new FragmentDialogFinViaje();
         dialogoFinViajeYCalificar.setArguments(args);
         dialogoFinViajeYCalificar.setCancelable(false);
+
+        //final Activity activity = wrActivity.get();
+
+        //dialogoFinViajeYCalificar.show(mainActivity.getSupportFragmentManager(), "TAG");
         dialogoFinViajeYCalificar.show(getActivity().getSupportFragmentManager(), "TAG");
     }
 
