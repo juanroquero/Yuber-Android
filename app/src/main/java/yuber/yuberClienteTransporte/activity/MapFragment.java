@@ -280,8 +280,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
                     Double latO = ubicacion.getDouble("latitud");
                     Double lonO = ubicacion.getDouble("longitud");
-                    Double latD = ubicacion.getDouble("latitud");
-                    Double lonD = ubicacion.getDouble("longitud");
+                    Double latD = ubicacionDestino.getDouble("latitud");
+                    Double lonD = ubicacionDestino.getDouble("longitud");
 
                     String dirO = getAddressFromLatLng(latO, lonO);
                     String dirD = getAddressFromLatLng(latD, lonD);
