@@ -9,13 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -48,8 +46,6 @@ public class FragmentDialogFinViaje extends DialogFragment {
     public static final String InstanciaServicioIDKey = "InstanciaServicioIDKey";
 
     SharedPreferences sharedpreferences;
-
-
 
     public FragmentDialogFinViaje() {
     }
@@ -122,7 +118,6 @@ public class FragmentDialogFinViaje extends DialogFragment {
         );
         return builder.create();
     }
-
 
 
     public void enviarPuntaje(){

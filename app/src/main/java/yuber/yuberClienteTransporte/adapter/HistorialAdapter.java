@@ -4,7 +4,6 @@ package yuber.yuberClienteTransporte.adapter;
  * Created by Agustin on 28-Oct-16.
  */
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,10 @@ import java.util.List;
 
 import yuber.yuberClienteTransporte.R;
 import yuber.yuberClienteTransporte.activity.Historial;
-import yuber.yuberClienteTransporte.activity.Movie;
-import yuber.yuberClienteTransporte.activity.Servicios;
 
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyViewHolder> {
 
-
-    public static final String TAG = "HISTORIAL ADAPTER";
     private List<Historial> historialList;
 
     String titulo;
@@ -63,32 +58,24 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.MyVi
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Historial historial = historialList.get(position);
-
-        String[] splitDir = historial.getDireccionOrigen().split(" ");
-        String numero = "";
-        String calle = "";
-
-        try{
-            numero = splitDir[splitDir.length - 1];
+        String Direccion = "";
+        try {
+            String[] splitDir = historial.getDireccionDestino().split(" ");
+            String numero = splitDir[splitDir.length - 1];
+            String calle = splitDir[splitDir.length - 2];
+            Direccion = calle + " " + numero;
         }catch (Exception e){
-            Log.d(TAG, "Error parseando strings: " + e);
-            numero = "";
+            Direccion = historial.getDireccionDestino();
         }
-        try{
-            calle = splitDir[splitDir.length - 2];
-        }catch (Exception e){
-            Log.d(TAG, "Error parseando strings: " + e);
-            calle = "";
-        }
-        String Direccion = calle + " " + numero;
 
         titulo = "Destino: " + Direccion;
         subTitulo = "Distancia: " + historial.getDistancia() + "Km   Costo: $" + historial.getCosto();
         fecha = historial.getFecha();
+        String[] fechaSplit = fecha.split(" ");
 
         holder.titulo.setText(titulo);
         holder.subtitulo.setText(subTitulo);
-        holder.año.setText(fecha);
+        holder.año.setText(fechaSplit[0]);
     }
 
     @Override

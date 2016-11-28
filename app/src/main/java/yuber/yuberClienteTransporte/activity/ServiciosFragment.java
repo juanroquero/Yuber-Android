@@ -37,17 +37,10 @@ public class ServiciosFragment extends Fragment {
 
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String IdServicioKey = "IdServicioKey";
-    public static final String EmailKey = "emailKey";
     public static final String ServiciosKey = "ServiciosKey";
     SharedPreferences sharedpreferences;
 
     private List<Servicios> servicioList = new ArrayList<>();
-
-    private JSONObject rec;
-    private JSONObject datos;
-    private JSONObject datos2;
-    private JSONObject datos3;
-
 
     public ServiciosFragment() {
         // Required empty public constructor
@@ -66,19 +59,14 @@ public class ServiciosFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_servicios, container, false);
         Ip = getResources().getString(R.string.IP);
 
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+
         RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.rv_recycler_view);
         rv.setHasFixedSize(true);
 
         //LO NUEVO QUE HICE 30-OCT
-
         obtenerServiciosDisponibles();
         ServiciosAdapter adapter = new ServiciosAdapter(servicioList);
-
-
-
-        // termina lo nuevo
-
-
 
         //HistorialAdapter adapter = new HistorialAdapter(new String[]{"test one", "test two", "test three", "test four", "test five" , "test six" , "test seven", "test eight", "test nine", "test ten"});
         rv.setAdapter(adapter);
@@ -90,23 +78,6 @@ public class ServiciosFragment extends Fragment {
         rv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         rv.setItemAnimator(new DefaultItemAnimator());
 
-/*      QUE ONDA CON ESTO? NO ES MAS NECESARIO?
-        rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(rootView.getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //Movie movie = movieList.get(position);
-               //Toast.makeText(getApplicationContext(), movie.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity().getApplicationContext(), position + " is selected!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-
-*/
-
         rv.addOnItemTouchListener(new HistoricRecyclerTouchListener(getActivity().getApplicationContext(), rv, new HistoricRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -117,8 +88,6 @@ public class ServiciosFragment extends Fragment {
             public void onLongClick(View view, int position) {
             }
         }));
-
-
 
         return rootView;
     }
@@ -133,30 +102,30 @@ public class ServiciosFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(IdServicioKey, jsonServicio);
         editor.commit();
+
         Toast.makeText(getActivity().getApplicationContext(), "Ha seleccionado viajar en " + servicios.getNombre() , Toast.LENGTH_SHORT).show();
-
-
 
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setmIdServicio(servicios.getID());
         mainActivity.displayView(1);
-        //Intent goToMainIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-       // goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //startActivity(goToMainIntent);
+
+        //cargo el historial nuevo en background
+        mainActivity.borrarHistorial();
+        mainActivity.cargarHistorial(servicios.getID());
+
     }
 
 
     private void obtenerServiciosDisponibles() {
-
         String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerServicios/Transporte" ;
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(null, url, new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
-                SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(ServiciosKey, response);
                 editor.commit();
+                agregarItems(response);
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
@@ -170,7 +139,6 @@ public class ServiciosFragment extends Fragment {
             }
         });
 
-        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
         String Response = sharedpreferences.getString(ServiciosKey, "");
         agregarItems(Response);
     }
@@ -195,55 +163,5 @@ public class ServiciosFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
-
-
-/*
-
-    private void obtenerServiciosDisponibles() {
-        Movie movie = new Movie("Auto", "5 km", "$250");
-        movieList.add(movie);
-
-
-        movie = new Movie("Moto", "4 km", "$200");
-        movieList.add(movie);
-
-        movie = new Movie("Limusina", "2,5 km", "$125");
-        movieList.add(movie);
-
-        movie = new Movie("Helicoptero", "3,5 km", "$175");
-        movieList.add(movie);
-
-        movie = new Movie("Tren", "1 km", "$50");
-        movieList.add(movie);
-
-        movie = new Movie("Bicicleta", "10 km", "$500");
-        movieList.add(movie);
-
-        movie = new Movie("Bote", "1 km", "$50");
-        movieList.add(movie);
-
-        movie = new Movie("Monopatin", "12 km", "$600");
-        movieList.add(movie);
-
-        movie = new Movie("Taxi", "3 km", "$150");
-        movieList.add(movie);
-
-        movie = new Movie("MotoTaxi", "5 km", "$250");
-        movieList.add(movie);
-
-        movie = new Movie("10/01/2016", "2,2km", "$110");
-        movieList.add(movie);
-
-        movie = new Movie("19/07/2015", "2 km", "$100");
-        movieList.add(movie);
-
-        movie = new Movie("01/01/2015", "12 km", "$600");
-        movieList.add(movie);
-
-        //mAdapter.notifyDataSetChanged();
-    }
-*/
-
 
 }
