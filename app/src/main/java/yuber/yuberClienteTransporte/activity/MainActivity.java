@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
 
-    private String Ip = "";
+    public String Ip = "";
     private String Puerto = "8080";
 
     public static final String MyPREFERENCES = "MyPrefs" ;
@@ -50,10 +50,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     public static final String TokenKey = "tokenKey";
     public static final String IdServicioKey = "IdServicioKey";
     public static final String ServiciosKey = "ServiciosKey";
+    SharedPreferences sharedpreferences;
+
     public static final String TAG = "MAIN ACTIVITY";
+
     private String nombreApellido;
     private int mIdServicio = 0;
     private List<Historial> ListaHistorial;
+    private List<Servicios> listaServicios = new ArrayList<>();
 
     private String emailSession = "";
     private String tokenSession = "";
@@ -227,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         Log.d(TAG, "El token es: " + tokenSession);
 
         cargarHistorial(0);
-
+        cargarServicios();
         // display the first navigation drawer view on app launch
         displayView(0);
     }
@@ -374,6 +378,30 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         startActivity(homeIntent);
     }
 
+    public List<Servicios> getListaServicios() {
+        return listaServicios;
+    }
 
+    private void cargarServicios() {
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String response = sharedpreferences.getString(ServiciosKey, "");
+        Servicios servicio;
+        try {
+            JSONArray arr_strJson = new JSONArray(response);
+            for (int i = 0; i < arr_strJson.length(); ++i) {
+                //rec todos los datos de una instancia servicio
+                JSONObject jsonServicio = arr_strJson.getJSONObject(i);
+                int id = jsonServicio.getInt("servicioId");
+                int tarifaBase = jsonServicio.getInt("servicioTarifaBase");
+                int precioKM = jsonServicio.getInt("servicioPrecioKM");
+                String nombre = jsonServicio.getString("servicioNombre");
+                //Agrego a la lista
+                servicio = new Servicios(id, tarifaBase, precioKM, nombre);
+                listaServicios.add(servicio);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

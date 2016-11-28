@@ -49,7 +49,8 @@ public class ServiciosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        MainActivity ma = (MainActivity) getActivity();
+        servicioList = ma.getListaServicios();
     }
 
     @Override
@@ -57,7 +58,6 @@ public class ServiciosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_servicios, container, false);
-        Ip = getResources().getString(R.string.IP);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
 
@@ -65,10 +65,9 @@ public class ServiciosFragment extends Fragment {
         rv.setHasFixedSize(true);
 
         //LO NUEVO QUE HICE 30-OCT
-        obtenerServiciosDisponibles();
+        //agregarServicios();
         ServiciosAdapter adapter = new ServiciosAdapter(servicioList);
 
-        //HistorialAdapter adapter = new HistorialAdapter(new String[]{"test one", "test two", "test three", "test four", "test five" , "test six" , "test seven", "test eight", "test nine", "test ten"});
         rv.setAdapter(adapter);
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -115,35 +114,9 @@ public class ServiciosFragment extends Fragment {
 
     }
 
-
-    private void obtenerServiciosDisponibles() {
-        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerServicios/Transporte" ;
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get(null, url, new AsyncHttpResponseHandler(){
-            @Override
-            public void onSuccess(String response) {
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(ServiciosKey, response);
-                editor.commit();
-                agregarItems(response);
-            }
-            @Override
-            public void onFailure(int statusCode, Throwable error, String content){
-                if(statusCode == 404){
-                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }else if(statusCode == 500){
-                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        String Response = sharedpreferences.getString(ServiciosKey, "");
-        agregarItems(Response);
-    }
-
-    private void agregarItems(String response){
+    private void agregarServicios() {
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+        String response = sharedpreferences.getString(ServiciosKey, "");
         Servicios servicio;
         try {
             JSONArray arr_strJson = new JSONArray(response);
@@ -154,7 +127,6 @@ public class ServiciosFragment extends Fragment {
                 int tarifaBase = jsonServicio.getInt("servicioTarifaBase");
                 int precioKM = jsonServicio.getInt("servicioPrecioKM");
                 String nombre = jsonServicio.getString("servicioNombre");
-
                 //Agrego a la lista
                 servicio = new Servicios(id, tarifaBase, precioKM, nombre);
                 servicioList.add(servicio);
@@ -163,5 +135,4 @@ public class ServiciosFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
 }

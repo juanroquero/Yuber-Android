@@ -26,6 +26,7 @@ public class Intro extends AppCompatActivity {
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String EmailKey = "emailKey";
     public static final String TokenKey = "tokenKey";
+    public static final String ServiciosKey = "ServiciosKey";
     SharedPreferences sharedpreferences;
 
     private String Ip = "";
@@ -55,6 +56,7 @@ public class Intro extends AppCompatActivity {
         editor.putString(TokenKey, token);
         editor.commit();
         Log.d(TAG, "TengoSession con token :" + token);
+        obtenerServiciosDisponibles();
         //Combruebo si ya tengo session.
         TengoSession(token);
 
@@ -127,6 +129,30 @@ public class Intro extends AppCompatActivity {
         Intent homeIntent = new Intent(getApplicationContext(), LoginActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeIntent);
+    }
+
+    private void obtenerServiciosDisponibles() {
+        String url = "http://" + Ip + ":" + Puerto + "/YuberWEB/rest/Servicios/ObtenerServicios/Transporte" ;
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(null, url, new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response) {
+                SharedPreferences sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(ServiciosKey, response);
+                editor.commit();
+            }
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
 }
