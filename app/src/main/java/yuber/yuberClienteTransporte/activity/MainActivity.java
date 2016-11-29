@@ -1,5 +1,6 @@
 package yuber.yuberClienteTransporte.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private String emailSession = "";
     private String tokenSession = "";
+
+    ProgressDialog DialogCargando;
 
     public List<Historial> getListaHistorial() {
         return ListaHistorial;
@@ -214,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         setContentView(R.layout.activity_map);
         Ip = getResources().getString(R.string.IP);
 
+        DialogCargando = new ProgressDialog(this);
+        DialogCargando.setMessage("Please wait");
+        DialogCargando.setCancelable(false);
+
         //ADDED FOR TOOLBAR
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -350,9 +357,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        DialogCargando.show();
         RequestHandle Rq = client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(String response) {
+                DialogCargando.hide();
                 if (response.contains("true") ){
                     cambiarALogin();
                 }else{
@@ -361,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             }
             @Override
             public void onFailure(int statusCode, Throwable error, String content){
+                DialogCargando.hide();
                 if(statusCode == 404){
                     Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
                 }else if(statusCode == 500){

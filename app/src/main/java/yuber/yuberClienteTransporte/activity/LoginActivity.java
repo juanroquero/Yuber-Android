@@ -33,13 +33,14 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private String Ip = "";
     private String Puerto = "8080";
-    ProgressDialog prgDialogCargando;
 
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String EmailKey = "emailKey";
     public static final String TokenKey = "tokenKey";
     public static final String ServiciosKey = "ServiciosKey";
     SharedPreferences sharedpreferences;
+
+    ProgressDialog DialogCargando;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,10 @@ public class LoginActivity extends AppCompatActivity {
         mEmailView = (EditText) findViewById(R.id.input_email);
         mPasswordView = (EditText) findViewById(R.id.input_password);
         Button loginButton = (Button) findViewById(R.id.btn_login);
+
+        DialogCargando = new ProgressDialog(this);
+        DialogCargando.setMessage("Espere unos segundos...");
+        DialogCargando.setCancelable(false);
 
         TextView signUpLink = (TextView) findViewById(R.id.link_signup);
         assert signUpLink != null;
@@ -63,10 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
-
-        prgDialogCargando = new ProgressDialog(this);
-        prgDialogCargando.setMessage("Please wait");
-        prgDialogCargando.setCancelable(false);
 
         //BOTON LOGIN
         Button login = (Button) findViewById(R.id.btn_login);
@@ -109,9 +110,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            DialogCargando.show();
             client.post(null, url, entity, "application/json", new AsyncHttpResponseHandler(){
                 @Override
                 public void onSuccess(String response) {
+                    DialogCargando.hide();
                     if (response.contains("true")){
                         cambiarAHome();
                     }else{
@@ -120,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onFailure(int statusCode, Throwable error, String content){
+                    DialogCargando.hide();
                     if(statusCode == 404){
                         Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
                     }else if(statusCode == 500){
